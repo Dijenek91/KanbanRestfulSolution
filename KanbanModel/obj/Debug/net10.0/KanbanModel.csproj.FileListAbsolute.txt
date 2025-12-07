@@ -1,0 +1,14 @@
+C:\Users\brati\source\repos\KanbanModel\bin\Debug\net10.0\KanbanModel.deps.json
+C:\Users\brati\source\repos\KanbanModel\bin\Debug\net10.0\KanbanModel.dll
+C:\Users\brati\source\repos\KanbanModel\bin\Debug\net10.0\KanbanModel.pdb
+C:\Users\brati\source\repos\KanbanModel\obj\Debug\net10.0\KanbanModel.GeneratedMSBuildEditorConfig.editorconfig
+C:\Users\brati\source\repos\KanbanModel\obj\Debug\net10.0\KanbanModel.AssemblyInfoInputs.cache
+C:\Users\brati\source\repos\KanbanModel\obj\Debug\net10.0\KanbanModel.AssemblyInfo.cs
+C:\Users\brati\source\repos\KanbanModel\obj\Debug\net10.0\KanbanModel.csproj.CoreCompileInputs.cache
+C:\Users\brati\source\repos\KanbanModel\obj\Debug\net10.0\KanbanModel.dll
+C:\Users\brati\source\repos\KanbanModel\obj\Debug\net10.0\refint\KanbanModel.dll
+C:\Users\brati\source\repos\KanbanModel\obj\Debug\net10.0\KanbanModel.pdb
+C:\Users\brati\source\repos\KanbanModel\obj\Debug\net10.0\ref\KanbanModel.dll
+C:\Users\brati\source\repos\KanbanModel\bin\Debug\net10.0\KanbanModel.runtimeconfig.json
+C:\Users\brati\source\repos\KanbanModel\obj\Debug\net10.0\KanbanModel.csproj.AssemblyReference.cache
+C:\Users\brati\source\repos\KanbanModel\obj\Debug\net10.0\KanbanModel.genruntimeconfig.cache

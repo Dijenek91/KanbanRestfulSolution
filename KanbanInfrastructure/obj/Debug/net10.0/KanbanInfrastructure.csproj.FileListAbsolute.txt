@@ -1,0 +1,17 @@
+C:\Users\brati\source\repos\KanbanInfrastructure\bin\Debug\net10.0\KanbanInfrastructure.deps.json
+C:\Users\brati\source\repos\KanbanInfrastructure\bin\Debug\net10.0\KanbanInfrastructure.runtimeconfig.json
+C:\Users\brati\source\repos\KanbanInfrastructure\bin\Debug\net10.0\KanbanInfrastructure.dll
+C:\Users\brati\source\repos\KanbanInfrastructure\bin\Debug\net10.0\KanbanInfrastructure.pdb
+C:\Users\brati\source\repos\KanbanInfrastructure\bin\Debug\net10.0\KanbanModel.dll
+C:\Users\brati\source\repos\KanbanInfrastructure\bin\Debug\net10.0\KanbanModel.pdb
+C:\Users\brati\source\repos\KanbanInfrastructure\obj\Debug\net10.0\KanbanInfrastructure.csproj.AssemblyReference.cache
+C:\Users\brati\source\repos\KanbanInfrastructure\obj\Debug\net10.0\KanbanInfrastructure.GeneratedMSBuildEditorConfig.editorconfig
+C:\Users\brati\source\repos\KanbanInfrastructure\obj\Debug\net10.0\KanbanInfrastructure.AssemblyInfoInputs.cache
+C:\Users\brati\source\repos\KanbanInfrastructure\obj\Debug\net10.0\KanbanInfrastructure.AssemblyInfo.cs
+C:\Users\brati\source\repos\KanbanInfrastructure\obj\Debug\net10.0\KanbanInfrastructure.csproj.CoreCompileInputs.cache
+C:\Users\brati\source\repos\KanbanInfrastructure\obj\Debug\net10.0\KanbanIn.7D401F5F.Up2Date
+C:\Users\brati\source\repos\KanbanInfrastructure\obj\Debug\net10.0\KanbanInfrastructure.dll
+C:\Users\brati\source\repos\KanbanInfrastructure\obj\Debug\net10.0\refint\KanbanInfrastructure.dll
+C:\Users\brati\source\repos\KanbanInfrastructure\obj\Debug\net10.0\KanbanInfrastructure.pdb
+C:\Users\brati\source\repos\KanbanInfrastructure\obj\Debug\net10.0\KanbanInfrastructure.genruntimeconfig.cache
+C:\Users\brati\source\repos\KanbanInfrastructure\obj\Debug\net10.0\ref\KanbanInfrastructure.dll

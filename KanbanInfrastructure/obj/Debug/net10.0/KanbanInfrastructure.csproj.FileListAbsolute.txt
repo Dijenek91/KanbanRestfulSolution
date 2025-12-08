@@ -15,3 +15,4 @@ C:\Users\brati\source\repos\KanbanInfrastructure\obj\Debug\net10.0\refint\Kanban
 C:\Users\brati\source\repos\KanbanInfrastructure\obj\Debug\net10.0\KanbanInfrastructure.pdb
 C:\Users\brati\source\repos\KanbanInfrastructure\obj\Debug\net10.0\KanbanInfrastructure.genruntimeconfig.cache
 C:\Users\brati\source\repos\KanbanInfrastructure\obj\Debug\net10.0\ref\KanbanInfrastructure.dll
+C:\Users\brati\source\repos\KanbanInfrastructure\obj\Debug\net10.0\KanbanInfrastructure.sourcelink.json

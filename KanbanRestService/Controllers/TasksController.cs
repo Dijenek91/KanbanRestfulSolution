@@ -1,12 +1,15 @@
 ﻿using KanbanModel.DTOs;
 using KanbanModel.ModelClasses;
 using KanbanRestService.Services;
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 
 namespace KanbanRestService.Controllers
 {
     [ApiController]
     [Route("api/[controller]")]
+    [Authorize]
+    
     public class TasksController : ControllerBase
     {
         private ITaskService _taskService;
@@ -16,11 +19,30 @@ namespace KanbanRestService.Controllers
             _taskService = taskService;
         }
 
-        // GET: TasksController/api/tasks
+        /// <summary>
+        ///     GET: TasksController/api/tasks 
+        ///     pagination example: TasksController/api/tasks?page=0&size=10
+        ///     sorting example: TasksController/api/tasks?sort=Name,desc&sort=Size,asc
+        /// </summary>
+        /// <param name="status"></param>
+        /// <param name="page"></param>
+        /// <param name="size"></param>
+        /// <param name="sort"></param>
+        /// <returns></returns>
+        // 
         [HttpGet]
-        public async Task<ActionResult<List<KanbanTask>>> GetAll()
+        [Authorize]
+        [ProducesResponseType(StatusCodes.Status401Unauthorized)]
+        [ProducesResponseType(StatusCodes.Status403Forbidden)]
+        public async Task<ActionResult<List<KanbanTask>>> GetAll(
+            [FromQuery] string? status,
+            [FromQuery] int page = 0,
+            [FromQuery] int size = 10,
+            [FromQuery] List<string>? sort = null
+            )
         {
-            return Ok(await _taskService.GetAllTasksAsync());
+            var paginatedTasks = await _taskService.GetPaginatedTasksAsync(status, page, size, sort);
+            return Ok(paginatedTasks);
         }
 
         // GET: TasksController/api/tasks/id
@@ -37,18 +59,18 @@ namespace KanbanRestService.Controllers
 
         // POST: TasksController/api/tasks CREATE
         [HttpPost]
-        public async Task<ActionResult> Create([FromBody] CreateKanbanTaskDTO taskDTO)
+        public async Task<ActionResult> Create([FromBody] CreateKanbanTaskDTO createTaskDTO)
         {
             if (!ModelState.IsValid)
                 return BadRequest(ModelState);
 
             var task = new KanbanTask
             {
-                Name = taskDTO.Name,
-                Description = taskDTO.Description,
-                Status = taskDTO.Status,
-                Size = taskDTO.Size,
-                PriorityEnum = taskDTO.PriorityEnum
+                Name = createTaskDTO.Name,
+                Description = createTaskDTO.Description ?? string.Empty,
+                Status = createTaskDTO.Status,
+                Size = createTaskDTO.Size ?? 0,
+                PriorityEnum = createTaskDTO.PriorityEnum ?? PriorityEnum.Low
             };
 
             var createdTask = await _taskService.CreateTaskAsync(task);
@@ -57,18 +79,18 @@ namespace KanbanRestService.Controllers
 
         // PUT: TasksController/api/tasks/ID 
         [HttpPut("{id}")]
-        public async Task<ActionResult> EditFullUpdate(int id, [FromBody] FullUpdateKanbanTaskDTO taskDTO)
+        public async Task<ActionResult> EditFullUpdate(int id, [FromBody] FullUpdateKanbanTaskDTO fullUpdateTaskDTO)
         {
             if (!ModelState.IsValid)
                 return BadRequest(ModelState);
 
             var task = new KanbanTask
             {
-                Name = taskDTO.Name,
-                Description = taskDTO.Description,
-                Status = taskDTO.Status,
-                Size = taskDTO.Size,
-                PriorityEnum = taskDTO.PriorityEnum
+                Name = fullUpdateTaskDTO.Name,
+                Description = fullUpdateTaskDTO.Description,
+                Status = fullUpdateTaskDTO.Status,
+                Size = fullUpdateTaskDTO.Size,
+                PriorityEnum = fullUpdateTaskDTO.PriorityEnum
             };
 
             var isTaskCreated = await _taskService.UpdateTaskAsync(id, task);
@@ -81,12 +103,12 @@ namespace KanbanRestService.Controllers
 
         // PATCH: TasksController/api/tasks/id
         [HttpPatch("{id}")]
-        public async Task<ActionResult> EditPartialUpdate(int id, [FromBody] PartialUpdateKanbanTaskDTO taskDTO)
+        public async Task<ActionResult> EditPartialUpdate(int id, [FromBody] PartialUpdateKanbanTaskDTO partialUpdateTaskDTO)
         {
             if (!ModelState.IsValid)
                 return BadRequest(ModelState);
 
-            var task = CreateKanbanTaskBasedOnPartialUpdateTaskDTO(taskDTO);
+            var task = CreateKanbanTaskBasedOnPartialUpdateTaskDTO(partialUpdateTaskDTO);
 
             var isTaskCreated = await _taskService.PartialUpdateTaskAsync(id, task);
 
@@ -112,20 +134,20 @@ namespace KanbanRestService.Controllers
 
         
         #region private methods
-        private static KanbanTask CreateKanbanTaskBasedOnPartialUpdateTaskDTO(PartialUpdateKanbanTaskDTO taskDTO)
+        private static KanbanTask CreateKanbanTaskBasedOnPartialUpdateTaskDTO(PartialUpdateKanbanTaskDTO partialUpdateTaskDTO)
         {
             var task = new KanbanTask();
 
-            if (taskDTO.Name != null)
-                task.Name = taskDTO.Name;
-            if (taskDTO.Description != null)
-                task.Description = taskDTO.Description;
-            if (taskDTO.Status.HasValue)
-                task.Status = taskDTO.Status;
-            if (taskDTO.Size != null)
-                task.Size = taskDTO.Size;
-            if (taskDTO.PriorityEnum.HasValue)
-                task.PriorityEnum = taskDTO.PriorityEnum;
+            if (partialUpdateTaskDTO.Name != null)
+                task.Name = partialUpdateTaskDTO.Name;
+            if (partialUpdateTaskDTO.Description != null)
+                task.Description = partialUpdateTaskDTO.Description;
+            if (partialUpdateTaskDTO.Status.HasValue)
+                task.Status = partialUpdateTaskDTO.Status;
+            if (partialUpdateTaskDTO.Size != null)
+                task.Size = partialUpdateTaskDTO.Size;
+            if (partialUpdateTaskDTO.PriorityEnum.HasValue)
+                task.PriorityEnum = partialUpdateTaskDTO.PriorityEnum;
 
             return task;
         }

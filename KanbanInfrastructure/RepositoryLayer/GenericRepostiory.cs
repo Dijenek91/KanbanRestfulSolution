@@ -39,6 +39,11 @@ namespace KanbanInfrastructure.RepositoryLayer
             get { return _entities ?? (_entities = Context.Set<TEntity>()); }
         }
 
+        public IQueryable<TEntity> GetQueryableEntities()
+        {
+            return Entities.AsQueryable();
+        }
+
         public async virtual Task<IEnumerable<TEntity>> GetAllRecordsAsync()
         {
             return await Entities.ToListAsync();

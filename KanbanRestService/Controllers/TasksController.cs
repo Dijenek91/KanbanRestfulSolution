@@ -1,4 +1,5 @@
-﻿using KanbanModel.DTOs;
+﻿using AutoMapper;
+using KanbanModel.DTOs;
 using KanbanModel.ModelClasses;
 using KanbanRestService.Services;
 using Microsoft.AspNetCore.Authorization;
@@ -13,10 +14,12 @@ namespace KanbanRestService.Controllers
     public class TasksController : ControllerBase
     {
         private ITaskService _taskService;
+        private readonly IMapper _mapper;
 
-        public TasksController(ITaskService taskService)
+        public TasksController(ITaskService taskService, IMapper mapper)
         {
             _taskService = taskService;
+            _mapper = mapper;
         }
 
         /// <summary>
@@ -64,14 +67,7 @@ namespace KanbanRestService.Controllers
             if (!ModelState.IsValid)
                 return BadRequest(ModelState);
 
-            var task = new KanbanTask
-            {
-                Name = createTaskDTO.Name,
-                Description = createTaskDTO.Description ?? string.Empty,
-                Status = createTaskDTO.Status,
-                Size = createTaskDTO.Size ?? 0,
-                PriorityEnum = createTaskDTO.PriorityEnum ?? PriorityEnum.Low
-            };
+            var task = _mapper.Map<KanbanTask>(createTaskDTO); //dto conversion to entity
 
             var createdTask = await _taskService.CreateTaskAsync(task);
             return CreatedAtAction(nameof(GetById), new { id = createdTask.Id }, createdTask);            
@@ -84,14 +80,7 @@ namespace KanbanRestService.Controllers
             if (!ModelState.IsValid)
                 return BadRequest(ModelState);
 
-            var task = new KanbanTask
-            {
-                Name = fullUpdateTaskDTO.Name,
-                Description = fullUpdateTaskDTO.Description,
-                Status = fullUpdateTaskDTO.Status,
-                Size = fullUpdateTaskDTO.Size,
-                PriorityEnum = fullUpdateTaskDTO.PriorityEnum
-            };
+            var task = _mapper.Map<KanbanTask>(fullUpdateTaskDTO);
 
             var isTaskCreated = await _taskService.UpdateTaskAsync(id, task);
             
@@ -108,7 +97,7 @@ namespace KanbanRestService.Controllers
             if (!ModelState.IsValid)
                 return BadRequest(ModelState);
 
-            var task = CreateKanbanTaskBasedOnPartialUpdateTaskDTO(partialUpdateTaskDTO);
+            var task = _mapper.Map<KanbanTask>(partialUpdateTaskDTO);
 
             var isTaskCreated = await _taskService.PartialUpdateTaskAsync(id, task);
 
@@ -131,27 +120,5 @@ namespace KanbanRestService.Controllers
             }
             return NoContent();
         }
-
-        
-        #region private methods
-        private static KanbanTask CreateKanbanTaskBasedOnPartialUpdateTaskDTO(PartialUpdateKanbanTaskDTO partialUpdateTaskDTO)
-        {
-            var task = new KanbanTask();
-
-            if (partialUpdateTaskDTO.Name != null)
-                task.Name = partialUpdateTaskDTO.Name;
-            if (partialUpdateTaskDTO.Description != null)
-                task.Description = partialUpdateTaskDTO.Description;
-            if (partialUpdateTaskDTO.Status.HasValue)
-                task.Status = partialUpdateTaskDTO.Status;
-            if (partialUpdateTaskDTO.Size != null)
-                task.Size = partialUpdateTaskDTO.Size;
-            if (partialUpdateTaskDTO.PriorityEnum.HasValue)
-                task.PriorityEnum = partialUpdateTaskDTO.PriorityEnum;
-
-            return task;
-        }
-        #endregion
-
     }
 }

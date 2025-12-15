@@ -1,10 +1,13 @@
+using AutoMapper;
 using KanbanInfrastructure.DAL;
 using KanbanInfrastructure.RepositoryLayer;
 using KanbanInfrastructure.RepositoryLayer.UnitOfWork;
+using KanbanModel.DTOs.Mapping;
 using KanbanRestService.Hubs;
 using KanbanRestService.Services;
 using Microsoft.AspNetCore.Authentication.JwtBearer;
 using Microsoft.EntityFrameworkCore;
+using Microsoft.Extensions.DependencyInjection;
 using Microsoft.IdentityModel.Tokens;
 using Microsoft.OpenApi;
 using Scalar.AspNetCore;
@@ -29,6 +32,10 @@ namespace KanbanRestService
                 options.UseSqlServer(builder.Configuration.GetConnectionString("DefaultConnection")));
             builder.Services.AddScoped<IUnitOfWork<KanbanAppDbContext>, GenericUnitOfWork<KanbanAppDbContext>>();
             builder.Services.AddScoped(typeof(IGenericRepository<>), typeof(GenericRepository<>));
+            builder.Services.AddAutoMapper(cfg =>
+                {
+                    cfg.AddProfile(new TaskProfile());
+                });
 
             builder.Services.AddScoped<ITaskService, TaskServiceHost>();
 

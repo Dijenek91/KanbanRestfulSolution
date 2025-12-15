@@ -20,7 +20,8 @@ CRUD operations:
   -GET - /api/tasks/{id}
   -POST - /api/tasks
   -PUT - /api/tasks/{id}
-  -PATCH - /api/tasks/{id}
+  -PATCH - /api/tasks/{id} 
+    - DTO based approach for handling partial updated (JSON patch is an alternative)
   -DELETE - /api/tasks/{id}
 
 Authenticaton\Authorization:

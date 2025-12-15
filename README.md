@@ -5,6 +5,7 @@ The implementation shall provide a rest API for a Kanban board front end UI.
 It shall include:
   - REST CRUD operations - which include validation, pagination, filtering and sorting
   - Persist data in a database (i chose SQL management studio to work with)
+  - AutoMapper - for DTO to Entity conversion
   - Have SignalR to push events and notifications to the UI in regards to created/updated/deleted Tasks
   - OpenAPI3/SCALAR
   - Unit test + integration tests with 80+% coverage

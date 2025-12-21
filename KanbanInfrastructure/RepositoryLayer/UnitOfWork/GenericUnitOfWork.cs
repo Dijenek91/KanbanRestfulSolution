@@ -55,7 +55,9 @@ namespace KanbanInfrastructure.RepositoryLayer.UnitOfWork
 
         }
 
-        //save that checks concurrency 
+        //save that checks concurrenc
+        //also this function covers automatically the transaction management for multiple operations on different repositories
+        //and rollback in case of exceptions or errors
         public async Task<(bool Success, string ErrorMessage)> Save<TEntity>(TEntity entityToUpdate, VerifyEntityAndSetRowVersion<TEntity> verifyEntityAndSetRowVersionFunc)
             where TEntity : class
         {

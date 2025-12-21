@@ -49,7 +49,7 @@ namespace KanbanRestService.Services
             return true;
         }
 
-        public async Task<PagedResultDTO<KanbanTask>> GetPaginatedTasksAsync(
+        public async Task<List<KanbanTask>> GetPaginatedTasksAsync(
             string? status,
             int page,
             int size,
@@ -69,7 +69,7 @@ namespace KanbanRestService.Services
             var total = await query.CountAsync<KanbanTask>();
             var items = await query.Skip(page * size).Take(size).ToListAsync();
 
-            return new PagedResultDTO<KanbanTask>(items, total, page, size);
+            return items;
         }
 
         public async Task<KanbanTask?> GetTaskByIdAsync(int id)

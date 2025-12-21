@@ -1,4 +1,5 @@
 ﻿using AutoMapper;
+using KanbanModel.DTOs.ReturnDTOs;
 using KanbanModel.ModelClasses;
 
 namespace KanbanModel.DTOs.Mapping
@@ -27,6 +28,8 @@ namespace KanbanModel.DTOs.Mapping
                     opts.Condition((src, dest, srcMember) =>
                         srcMember != null
                     ));
+
+            CreateMap<KanbanTask, KanbanTaskDTO>();
         }
     }
 }

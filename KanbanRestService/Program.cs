@@ -1,15 +1,13 @@
-using AutoMapper;
 using KanbanInfrastructure.DAL;
 using KanbanInfrastructure.RepositoryLayer;
 using KanbanInfrastructure.RepositoryLayer.UnitOfWork;
 using KanbanModel.DTOs.Mapping;
 using KanbanRestService.Hubs;
+using KanbanRestService.Middlware;
 using KanbanRestService.Services;
 using Microsoft.AspNetCore.Authentication.JwtBearer;
 using Microsoft.EntityFrameworkCore;
-using Microsoft.Extensions.DependencyInjection;
 using Microsoft.IdentityModel.Tokens;
-using Microsoft.OpenApi;
 using Scalar.AspNetCore;
 using System.Text;
 
@@ -27,16 +25,20 @@ namespace KanbanRestService
             // Learn more about configuring OpenAPI at https://aka.ms/aspnet/openapi
             builder.Services.AddOpenApi();
 
-
+            //DB related services
             builder.Services.AddDbContext<KanbanAppDbContext>(options =>
                 options.UseSqlServer(builder.Configuration.GetConnectionString("DefaultConnection")));
             builder.Services.AddScoped<IUnitOfWork<KanbanAppDbContext>, GenericUnitOfWork<KanbanAppDbContext>>();
             builder.Services.AddScoped(typeof(IGenericRepository<>), typeof(GenericRepository<>));
+
+            //Controller related services
             builder.Services.AddAutoMapper(cfg =>
                 {
                     cfg.AddProfile(new TaskProfile());
                 });
 
+            builder.Services.AddHttpContextAccessor();
+            
             builder.Services.AddScoped<ITaskService, TaskServiceHost>();
 
             builder.Services.AddSignalR();
@@ -45,9 +47,10 @@ namespace KanbanRestService
 
             AddCorsToBuilder(builder);
 
-            var app = builder.Build();
+            // HTTP request pipeline configuration
+            var app = builder.Build();            
 
-            // Configure the HTTP request pipeline.
+            app.UseMiddleware<GlobalExceptionMiddleware>();
 
             app.UseRouting();
 
@@ -89,13 +92,11 @@ namespace KanbanRestService
                     };
                 });
 
-
             if (!builder.Environment.IsDevelopment())
             {
                 return;
             }
-
-         
+        
         }
         
 

@@ -22,5 +22,8 @@ namespace KanbanModel.DTOs
 
         [Range(1, 3, ErrorMessage = "Priority must be between 1 and 3 (Low-Med-High)")]
         public PriorityEnum? PriorityEnum { get; set; }
+
+
+        
     }
 }

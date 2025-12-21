@@ -16,5 +16,8 @@
             Page = page;
             Size = size;
         }
+
+        // HATEOAS links
+        public List<LinkDTO> Links { get; set; } = new();
     }
 }

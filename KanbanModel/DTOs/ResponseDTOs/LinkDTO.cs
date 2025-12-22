@@ -1,4 +1,4 @@
-﻿namespace KanbanModel.DTOs
+﻿namespace KanbanModel.DTOs.ResponseDTOs
 {
     public class LinkDTO
     {

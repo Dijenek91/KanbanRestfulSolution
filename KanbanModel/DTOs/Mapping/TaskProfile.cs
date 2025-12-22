@@ -1,5 +1,6 @@
 ﻿using AutoMapper;
-using KanbanModel.DTOs.ReturnDTOs;
+using KanbanModel.DTOs.RequestDTOs;
+using KanbanModel.DTOs.ResponseDTOs;
 using KanbanModel.ModelClasses;
 
 namespace KanbanModel.DTOs.Mapping
@@ -9,7 +10,7 @@ namespace KanbanModel.DTOs.Mapping
         public TaskProfile()
         {
             //if any properties are missing in the DTO, set default values
-            CreateMap<CreateKanbanTaskDTO, KanbanTask>()
+            CreateMap<CreateKanbanTaskRequest, KanbanTask>()
                .ForMember(dest => dest.Description,
                    opt => opt.MapFrom(src => src.Description ?? string.Empty))
 
@@ -20,16 +21,16 @@ namespace KanbanModel.DTOs.Mapping
                    opt => opt.MapFrom(src => src.PriorityEnum ?? PriorityEnum.Low));
 
             //all properties are required in full update DTO
-            CreateMap<FullUpdateKanbanTaskDTO, KanbanTask>();
+            CreateMap<FullUpdateKanbanTaskRequest, KanbanTask>();
 
             //Only map this property if the source value is NOT null
-            CreateMap<PartialUpdateKanbanTaskDTO, KanbanTask>()
+            CreateMap<PartialUpdateKanbanTaskRequest, KanbanTask>()
                 .ForAllMembers(opts =>
                     opts.Condition((src, dest, srcMember) =>
                         srcMember != null
                     ));
 
-            CreateMap<KanbanTask, KanbanTaskDTO>();
+            CreateMap<KanbanTask, KanbanTaskResponse>();
         }
     }
 }

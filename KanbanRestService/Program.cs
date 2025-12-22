@@ -2,6 +2,7 @@ using KanbanInfrastructure.DAL;
 using KanbanInfrastructure.RepositoryLayer;
 using KanbanInfrastructure.RepositoryLayer.UnitOfWork;
 using KanbanModel.DTOs.Mapping;
+using KanbanRestService.Factories;
 using KanbanRestService.Hubs;
 using KanbanRestService.Middlware;
 using KanbanRestService.Services;
@@ -38,7 +39,8 @@ namespace KanbanRestService
                 });
 
             builder.Services.AddHttpContextAccessor();
-            
+
+            builder.Services.AddScoped<ITaskDTOFactory, TaskDTOFactory>();
             builder.Services.AddScoped<ITaskService, TaskServiceHost>();
 
             builder.Services.AddSignalR();

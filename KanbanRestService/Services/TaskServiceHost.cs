@@ -1,7 +1,9 @@
-﻿using KanbanInfrastructure.DAL;
+﻿using AutoMapper;
+using KanbanInfrastructure.DAL;
 using KanbanInfrastructure.RepositoryLayer;
 using KanbanInfrastructure.RepositoryLayer.UnitOfWork;
 using KanbanModel.DTOs;
+using KanbanModel.DTOs.RequestDTOs;
 using KanbanModel.ModelClasses;
 using KanbanRestService.Hubs;
 using Microsoft.AspNetCore.SignalR;
@@ -14,21 +16,28 @@ namespace KanbanRestService.Services
         private IUnitOfWork<KanbanAppDbContext> _unitOfWork;
         private IGenericRepository<KanbanTask> _taskRepo;
         private readonly IHubContext<TasksHub> _tasksHubContext;
-        public TaskServiceHost(IUnitOfWork<KanbanAppDbContext> unitOfWork, IGenericRepository<KanbanTask> taskRepo, IHubContext<TasksHub> tasksHubContext)
+        private readonly IMapper _mapper;
+
+        public TaskServiceHost(IUnitOfWork<KanbanAppDbContext> unitOfWork, 
+            IGenericRepository<KanbanTask> taskRepo, 
+            IHubContext<TasksHub> tasksHubContext,
+            IMapper mapper)
         {
             _unitOfWork = unitOfWork;
             _taskRepo = taskRepo;
             _tasksHubContext = tasksHubContext;
+            _mapper = mapper;
         }
 
-        public async Task<KanbanTask> CreateTaskAsync(KanbanTask task)
+        public async Task<KanbanTask> CreateTaskAsync(CreateKanbanTaskRequest createdTask)
         {
-            _taskRepo.Add(task);
+            var mappedKanbanTask = _mapper.Map<KanbanTask>(createdTask);
+            _taskRepo.Add(mappedKanbanTask);
             
             await _unitOfWork.SaveAsync();
-            await _tasksHubContext.Clients.All.SendAsync("TaskCreated", task);
+            await _tasksHubContext.Clients.All.SendAsync("TaskCreated", mappedKanbanTask);
             
-            return task;
+            return mappedKanbanTask;
         }
 
         public async Task<bool> DeleteTaskAsync(int id)
@@ -77,41 +86,29 @@ namespace KanbanRestService.Services
             return await _taskRepo.FindAsync(id);
         }
 
-        public async Task<bool> PartialUpdateTaskAsync(int id, KanbanTask task)
+        public async Task<bool> PartialUpdateTaskAsync(int id, PartialUpdateKanbanTaskRequest taskRequest)
         {
-            var existingTask = await _taskRepo.FindAsync(id);
-            if (existingTask == null)
+            var foundTask = await _taskRepo.FindAsync(id);
+            if (foundTask == null)
                 return false;
 
             // Update only properties that were sent (NOT NULL)
-            if (task.Name != null)
-                existingTask.Name = task.Name;
+            _mapper.Map(taskRequest, foundTask);   
 
-            if (task.Description != null)
-                existingTask.Description = task.Description;
-
-            if (task.Status.HasValue)
-                existingTask.Status = task.Status;
-
-            if (task.Size != null)
-                existingTask.Size = task.Size;
-
-            if (task.PriorityEnum.HasValue)
-                existingTask.PriorityEnum = task.PriorityEnum;
-
-            _taskRepo.Update(existingTask);
+            _taskRepo.Update(foundTask);
 
             await _unitOfWork.SaveAsync();
 
-            await _tasksHubContext.Clients.All.SendAsync("TaskUpdated", existingTask);
+            await _tasksHubContext.Clients.All.SendAsync("TaskUpdated", foundTask);
 
             return true;
         }
 
-        public async Task<bool> UpdateTaskAsync(int id, KanbanTask task)
+        public async Task<bool> UpdateTaskAsync(int id, FullUpdateKanbanTaskRequest taskRequest)
         {
-            if (task.Id != 0 && task.Id != id)
-                throw new ArgumentException("ID in the body does not match ID in the URL.");
+            if (id != 0)
+                throw new ArgumentException("ID with 0 doesn't exist.");
+
 
             var foundTask = await _taskRepo.FindAsync(id);
             if (foundTask == null)
@@ -119,11 +116,7 @@ namespace KanbanRestService.Services
                 return false;
             }
 
-            foundTask.Name = task.Name;
-            foundTask.Description = task.Description;
-            foundTask.Status = task.Status;
-            foundTask.Size = task.Size;
-            foundTask.PriorityEnum = task.PriorityEnum;
+            foundTask = _mapper.Map<KanbanTask>(taskRequest);
 
             _taskRepo.Update(foundTask);
             await _unitOfWork.SaveAsync();

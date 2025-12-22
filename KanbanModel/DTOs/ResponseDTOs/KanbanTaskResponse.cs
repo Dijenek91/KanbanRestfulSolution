@@ -1,8 +1,8 @@
 ﻿using KanbanModel.ModelClasses;
 
-namespace KanbanModel.DTOs.ReturnDTOs
+namespace KanbanModel.DTOs.ResponseDTOs
 {
-    public class KanbanTaskDTO
+    public class KanbanTaskResponse
     {
         public int Id { get; set; }
 

@@ -42,11 +42,11 @@ namespace KanbanInfrastructure.RepositoryLayer.UnitOfWork
         }
 
 
-        public async Task SaveAsync()
+        public async Task SaveAsync(CancellationToken cancellationToken)
         {
             try
             {
-                await _dbContext.SaveChangesAsync();
+                await _dbContext.SaveChangesAsync(cancellationToken);
             }
             catch (DbUpdateException ex)
             {
@@ -58,14 +58,17 @@ namespace KanbanInfrastructure.RepositoryLayer.UnitOfWork
         //save that checks concurrenc
         //also this function covers automatically the transaction management for multiple operations on different repositories
         //and rollback in case of exceptions or errors
-        public async Task<(bool Success, string ErrorMessage)> Save<TEntity>(TEntity entityToUpdate, VerifyEntityAndSetRowVersion<TEntity> verifyEntityAndSetRowVersionFunc)
+        public async Task<(bool Success, string ErrorMessage)> Save<TEntity>(
+            TEntity entityToUpdate, 
+            VerifyEntityAndSetRowVersion<TEntity> verifyEntityAndSetRowVersionFunc,
+            CancellationToken cancellationToken)
             where TEntity : class
         {
             var errorMessage = string.Empty;
 
             try
             {
-                await _dbContext.SaveChangesAsync();
+                await _dbContext.SaveChangesAsync(cancellationToken);
             }
             catch (DbUpdateConcurrencyException ex)
             {

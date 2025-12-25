@@ -44,17 +44,17 @@ namespace KanbanInfrastructure.RepositoryLayer
             return Entities.AsQueryable();
         }
 
-        public async virtual Task<IEnumerable<TEntity>> GetAllRecordsAsync()
+        public async virtual Task<IEnumerable<TEntity>> GetAllRecordsAsync(CancellationToken cancellationToken)
         {
-            return await Entities.ToListAsync();
+            return await Entities.ToListAsync(cancellationToken);
         }
 
-        public async virtual Task<TEntity> FindAsync(int? id)
+        public async virtual Task<TEntity> FindAsync(int? id, CancellationToken cancellationToken)
         {
             if(id == null)
                 throw new ArgumentNullException(nameof(id));
             
-            return await Entities.FindAsync(id);
+            return await Entities.FindAsync(id, cancellationToken);
         }
 
         public virtual void Add(TEntity entity)

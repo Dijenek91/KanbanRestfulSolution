@@ -1,4 +1,5 @@
 ﻿using Microsoft.EntityFrameworkCore;
+using System.Threading;
 
 namespace KanbanInfrastructure.RepositoryLayer.UnitOfWork
 {
@@ -11,9 +12,9 @@ namespace KanbanInfrastructure.RepositoryLayer.UnitOfWork
 
         IGenericRepository<TEntity> GenericRepository<TEntity>() where TEntity : class;
 
-        Task SaveAsync();
+        Task SaveAsync(CancellationToken cancellationToken);
 
-        Task<(bool Success, string ErrorMessage)> Save<TEntity>(TEntity entityToUpdate, VerifyEntityAndSetRowVersion<TEntity> verifyEntityAndSetRowVersionFunc)
+        Task<(bool Success, string ErrorMessage)> Save<TEntity>(TEntity entityToUpdate, VerifyEntityAndSetRowVersion<TEntity> verifyEntityAndSetRowVersionFunc, CancellationToken cancellationToken)
             where TEntity : class;
     }
 }

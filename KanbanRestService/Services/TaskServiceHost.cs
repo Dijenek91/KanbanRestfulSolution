@@ -2,7 +2,6 @@
 using KanbanInfrastructure.DAL;
 using KanbanInfrastructure.RepositoryLayer;
 using KanbanInfrastructure.RepositoryLayer.UnitOfWork;
-using KanbanModel.DTOs;
 using KanbanModel.DTOs.RequestDTOs;
 using KanbanModel.ModelClasses;
 using KanbanRestService.Hubs;
@@ -29,20 +28,23 @@ namespace KanbanRestService.Services
             _mapper = mapper;
         }
 
-        public async Task<KanbanTask> CreateTaskAsync(CreateKanbanTaskRequest createdTask)
+        public async Task<KanbanTask> CreateTaskAsync(CreateKanbanTaskRequest createdTask, CancellationToken cancellationToken)
         {
             var mappedKanbanTask = _mapper.Map<KanbanTask>(createdTask);
             _taskRepo.Add(mappedKanbanTask);
             
-            await _unitOfWork.SaveAsync();
-            await _tasksHubContext.Clients.All.SendAsync("TaskCreated", mappedKanbanTask);
+            await _unitOfWork.SaveAsync(cancellationToken);
+            await _tasksHubContext.Clients.All.SendAsync("TaskCreated", mappedKanbanTask, cancellationToken);
             
             return mappedKanbanTask;
         }
 
-        public async Task<bool> DeleteTaskAsync(int id)
+        public async Task<bool> DeleteTaskAsync(int id, CancellationToken cancellationToken)
         {
-            var foundTask = await _taskRepo.FindAsync(id);
+            if (id == 0)
+                throw new ArgumentException("ID with 0 doesn't exist.");
+
+            var foundTask = await _taskRepo.FindAsync(id, cancellationToken);
             var deletedId = foundTask.Id;
 
             if (foundTask == null)
@@ -50,21 +52,21 @@ namespace KanbanRestService.Services
                 return false;
             }
             _taskRepo.Delete(foundTask);
-            await _unitOfWork.SaveAsync();
+            await _unitOfWork.SaveAsync(cancellationToken);
 
             
-            await _tasksHubContext.Clients.All.SendAsync("TaskDeleted (id)", deletedId);
+            await _tasksHubContext.Clients.All.SendAsync("TaskDeleted", deletedId, cancellationToken);
 
             return true;
         }
 
-        public async Task<List<KanbanTask>> GetPaginatedTasksAsync(
+        public async Task<List<KanbanTask>> GetPaginatedTasksAsync(CancellationToken cancellationToken,
             string? status,
             int page,
             int size,
             List<string>? sortFields)
         {
-            var query = _taskRepo.GetQueryableEntities();
+            var query = _taskRepo.GetQueryableEntities().AsNoTracking();
 
             if (!string.IsNullOrEmpty(status) && Enum.TryParse<StatusEnum>(status, true, out var statusEnum))
             {
@@ -75,20 +77,20 @@ namespace KanbanRestService.Services
             query = ApplySorting(query, sortFields);
 
             //Pagination
-            var total = await query.CountAsync<KanbanTask>();
-            var items = await query.Skip(page * size).Take(size).ToListAsync();
+            var total = await query.CountAsync<KanbanTask>(cancellationToken);
+            var items = await query.Skip(page * size).Take(size).ToListAsync(cancellationToken);
 
             return items;
         }
 
-        public async Task<KanbanTask?> GetTaskByIdAsync(int id)
+        public async Task<KanbanTask?> GetTaskByIdAsync(int id, CancellationToken cancellationToken)
         {
-            return await _taskRepo.FindAsync(id);
+            return await _taskRepo.FindAsync(id, cancellationToken);
         }
 
-        public async Task<bool> PartialUpdateTaskAsync(int id, PartialUpdateKanbanTaskRequest taskRequest)
+        public async Task<bool> PartialUpdateTaskAsync(int id, PartialUpdateKanbanTaskRequest taskRequest, CancellationToken cancellationToken)
         {
-            var foundTask = await _taskRepo.FindAsync(id);
+            var foundTask = await _taskRepo.FindAsync(id, cancellationToken);
             if (foundTask == null)
                 return false;
 
@@ -97,20 +99,20 @@ namespace KanbanRestService.Services
 
             _taskRepo.Update(foundTask);
 
-            await _unitOfWork.SaveAsync();
+            await _unitOfWork.SaveAsync(cancellationToken);
 
             await _tasksHubContext.Clients.All.SendAsync("TaskUpdated", foundTask);
 
             return true;
         }
 
-        public async Task<bool> UpdateTaskAsync(int id, FullUpdateKanbanTaskRequest taskRequest)
+        public async Task<bool> UpdateTaskAsync(int id, FullUpdateKanbanTaskRequest taskRequest, CancellationToken cancellationToken)
         {
-            if (id != 0)
+            if (id == 0)
                 throw new ArgumentException("ID with 0 doesn't exist.");
 
 
-            var foundTask = await _taskRepo.FindAsync(id);
+            var foundTask = await _taskRepo.FindAsync(id, cancellationToken);
             if (foundTask == null)
             {
                 return false;
@@ -119,7 +121,7 @@ namespace KanbanRestService.Services
             foundTask = _mapper.Map<KanbanTask>(taskRequest);
 
             _taskRepo.Update(foundTask);
-            await _unitOfWork.SaveAsync();
+            await _unitOfWork.SaveAsync(cancellationToken);
 
             await _tasksHubContext.Clients.All.SendAsync("TaskUpdated", foundTask);
 

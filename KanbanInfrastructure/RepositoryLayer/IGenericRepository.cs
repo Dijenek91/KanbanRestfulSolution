@@ -1,12 +1,14 @@
-﻿namespace KanbanInfrastructure.RepositoryLayer
+﻿using System.Threading;
+
+namespace KanbanInfrastructure.RepositoryLayer
 {
     public interface IGenericRepository<TEntity> where TEntity : class
     {
         public IQueryable<TEntity> GetQueryableEntities(); //used for filtering, sorting, and pagination
 
-        Task<IEnumerable<TEntity>> GetAllRecordsAsync();
+        Task<IEnumerable<TEntity>> GetAllRecordsAsync(CancellationToken cancellationToken);
 
-        Task<TEntity> FindAsync(int? entityId);
+        Task<TEntity> FindAsync(int? entityId, CancellationToken cancellationToken);
 
         void Add(TEntity entity);
 

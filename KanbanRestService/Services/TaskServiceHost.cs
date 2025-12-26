@@ -45,17 +45,16 @@ namespace KanbanRestService.Services
                 throw new ArgumentException("ID with 0 doesn't exist.");
 
             var foundTask = await _taskRepo.FindAsync(id, cancellationToken);
-            var deletedId = foundTask.Id;
-
             if (foundTask == null)
             {
                 return false;
             }
+                        
             _taskRepo.Delete(foundTask);
             await _unitOfWork.SaveAsync(cancellationToken);
 
             
-            await _tasksHubContext.Clients.All.SendAsync("TaskDeleted", deletedId, cancellationToken);
+            await _tasksHubContext.Clients.All.SendAsync("TaskDeleted", foundTask.Id, cancellationToken);
 
             return true;
         }
@@ -118,7 +117,7 @@ namespace KanbanRestService.Services
                 return false;
             }
 
-            foundTask = _mapper.Map<KanbanTask>(taskRequest);
+            _mapper.Map(taskRequest, foundTask);
 
             _taskRepo.Update(foundTask);
             await _unitOfWork.SaveAsync(cancellationToken);

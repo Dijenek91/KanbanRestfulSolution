@@ -14,7 +14,7 @@ using System.Reflection;
 [assembly: System.Reflection.AssemblyCompanyAttribute("KanbanInfrastructure")]
 [assembly: System.Reflection.AssemblyConfigurationAttribute("Debug")]
 [assembly: System.Reflection.AssemblyFileVersionAttribute("1.0.0.0")]
-[assembly: System.Reflection.AssemblyInformationalVersionAttribute("1.0.0+6b808801bf7ddc639b61bea66184593780321f10")]
+[assembly: System.Reflection.AssemblyInformationalVersionAttribute("1.0.0+c325ed2e3cd948f6e2652163bb4c6af33f607717")]
 [assembly: System.Reflection.AssemblyProductAttribute("KanbanInfrastructure")]
 [assembly: System.Reflection.AssemblyTitleAttribute("KanbanInfrastructure")]
 [assembly: System.Reflection.AssemblyVersionAttribute("1.0.0.0")]

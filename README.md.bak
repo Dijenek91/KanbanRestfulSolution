@@ -16,13 +16,16 @@ Performance requirement:
   - on GET /api/tasks?page=0&size50 <= 150 ms on local laptop (whatever that means)
 
 CRUD operations:
-  -GET - /api/tasks
-  -GET - /api/tasks/{id}
-  -POST - /api/tasks
-  -PUT - /api/tasks/{id}
-  -PATCH - /api/tasks/{id} 
+  -GetById - GET - /api/tasks
+  -GetAll - GET - /api/tasks/{id}
+  -Create - POST - /api/tasks
+  -Edit - PUT - /api/tasks/{id}
+  -Partial edit - PATCH - /api/tasks/{id} 
     - DTO based approach for handling partial updated (JSON patch is an alternative)
-  -DELETE - /api/tasks/{id}
+  -Delete - DELETE - /api/tasks/{id}
+HATEOAS links for:
+  -GetById - GET - /api/tasks
+  -GetAll - GET - /api/tasks/{id}
 
 Authenticaton\Authorization:
   - Provided through use of JWT token generated in the Api\Auth service

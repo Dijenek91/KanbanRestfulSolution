@@ -2,7 +2,10 @@ using KanbanInfrastructure.DAL;
 using KanbanInfrastructure.RepositoryLayer;
 using KanbanInfrastructure.RepositoryLayer.UnitOfWork;
 using KanbanModel.DTOs.Mapping;
+using KanbanModel.ModelClasses;
 using KanbanRestService.Factories;
+using KanbanRestService.GraphQL.Mutations;
+using KanbanRestService.GraphQL.Queries;
 using KanbanRestService.Hubs;
 using KanbanRestService.Middlware;
 using KanbanRestService.Services;
@@ -11,6 +14,7 @@ using Microsoft.EntityFrameworkCore;
 using Microsoft.IdentityModel.Tokens;
 using Scalar.AspNetCore;
 using System.Text;
+using static Microsoft.EntityFrameworkCore.DbLoggerCategory;
 
 namespace KanbanRestService
 {
@@ -20,37 +24,10 @@ namespace KanbanRestService
         {
             var builder = WebApplication.CreateBuilder(args);
 
-            // Add services to the container.
-
-            builder.Services.AddControllers();
-            // Learn more about configuring OpenAPI at https://aka.ms/aspnet/openapi
-            builder.Services.AddOpenApi();
-
-            //DB related services
-            builder.Services.AddDbContext<KanbanAppDbContext>(options =>
-                options.UseSqlServer(builder.Configuration.GetConnectionString("DefaultConnection")));
-            builder.Services.AddScoped<IUnitOfWork<KanbanAppDbContext>, GenericUnitOfWork<KanbanAppDbContext>>();
-            builder.Services.AddScoped(typeof(IGenericRepository<>), typeof(GenericRepository<>));
-
-            //Controller related services
-            builder.Services.AddAutoMapper(cfg =>
-                {
-                    cfg.AddProfile(new TaskProfile());
-                });
-
-            builder.Services.AddHttpContextAccessor();
-
-            builder.Services.AddScoped<ITaskDTOFactory, TaskDTOFactory>();
-            builder.Services.AddScoped<ITaskService, TaskServiceHost>();
-
-            builder.Services.AddSignalR();
-
-            AddSecurityTo(builder);
-
-            AddCorsToBuilder(builder);
+            AddServicesTo(builder);
 
             // HTTP request pipeline configuration
-            var app = builder.Build();            
+            var app = builder.Build();
 
             app.UseMiddleware<GlobalExceptionMiddleware>();
 
@@ -66,8 +43,51 @@ namespace KanbanRestService
             app.UseAuthorization();
 
             app.MapControllers();
+            app.MapGraphQL();
 
             app.Run();
+        }
+
+        private static void AddServicesTo(WebApplicationBuilder builder)
+        {
+            // Add services to the container.
+
+            builder.Services.AddControllers();
+            // Learn more about configuring OpenAPI at https://aka.ms/aspnet/openapi
+            builder.Services.AddOpenApi();
+
+            //DB related services
+            builder.Services.AddDbContext<KanbanAppDbContext>(options =>
+                options.UseSqlServer(builder.Configuration.GetConnectionString("DefaultConnection")));
+            builder.Services.AddScoped<IUnitOfWork<KanbanAppDbContext>, GenericUnitOfWork<KanbanAppDbContext>>();
+            builder.Services.AddScoped(typeof(IGenericRepository<>), typeof(GenericRepository<>));
+
+            //Controller related services
+            builder.Services.AddAutoMapper(cfg =>
+            {
+                cfg.AddProfile(new TaskProfile());
+            });
+
+            builder.Services.AddHttpContextAccessor();
+
+            builder.Services.AddScoped<ITaskDTOFactory, TaskDTOFactory>();
+            builder.Services.AddScoped<ITaskService, TaskServiceHost>();
+
+            builder.Services.AddSignalR();
+
+            builder.Services
+                .AddGraphQLServer()
+                .AddEnumType<StatusEnum>()
+                .AddEnumType<PriorityEnum>()
+                .AddQueryType<TaskQuery>()
+                .AddMutationType<TaskMutation>()
+                .AddFiltering()
+                .AddSorting()
+                .AddProjections();
+
+            AddSecurityTo(builder);
+
+            AddCorsToBuilder(builder);
         }
 
         private static void AddSecurityTo(WebApplicationBuilder builder)

@@ -1,11 +1,10 @@
-﻿using AutoMapper;
-using KanbanModel.DTOs.RequestDTOs;
+﻿using KanbanModel.DTOs.RequestDTOs;
 using KanbanModel.DTOs.ResponseDTOs;
-using KanbanModel.ModelClasses;
 using KanbanRestService.Factories;
 using KanbanRestService.Services;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
+using SCG = System.Collections.Generic;
 
 namespace KanbanRestService.Controllers
 {
@@ -18,7 +17,7 @@ namespace KanbanRestService.Controllers
         private ITaskService _taskService;
         private ITaskDTOFactory _responseDtoFactory;
 
-        public TasksController(ITaskService taskService, ITaskDTOFactory taskDTOFactory, CancellationToken cancellationToken)
+        public TasksController(ITaskService taskService, ITaskDTOFactory taskDTOFactory)
         {
             _taskService = taskService;
             _responseDtoFactory = taskDTOFactory;
@@ -133,7 +132,7 @@ namespace KanbanRestService.Controllers
         private static void TaskExistsOrThrowException(int id, bool taskExists)
         {
             if (taskExists == false)
-                throw new KeyNotFoundException($"Task with id {id} not found.");
+                throw new SCG.KeyNotFoundException($"Task with id {id} not found.");
         }
        
         #endregion

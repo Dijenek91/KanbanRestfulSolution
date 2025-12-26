@@ -1,6 +1,7 @@
 ﻿using System.ComponentModel.DataAnnotations;
 using System.Net;
 using System.Text.Json;
+using SCG = System.Collections.Generic;
 
 namespace KanbanRestService.Middlware
 {
@@ -35,7 +36,7 @@ namespace KanbanRestService.Middlware
             // Map exception to HTTP status code
             var statusCode = exception switch
             {
-                KeyNotFoundException => HttpStatusCode.NotFound,
+                SCG.KeyNotFoundException => HttpStatusCode.NotFound,
                 ValidationException => HttpStatusCode.BadRequest,
                 UnauthorizedAccessException => HttpStatusCode.Unauthorized,
                 _ => HttpStatusCode.InternalServerError

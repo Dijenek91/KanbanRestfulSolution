@@ -36,3 +36,6 @@ Testing and verification envrioment:
   - Postman project: https://web.postman.co/workspace/My-Workspace~3be1e0e9-c3e8-4732-800c-bb6ad975a485/collection/6602988-e533ff4c-6fa5-47d1-a054-6f2004b6fc6d?action=share&source=copy-link&creator=6602988
   - Make sure to set the enviroment to: https://web.postman.co/workspace/My-Workspace~3be1e0e9-c3e8-4732-800c-bb6ad975a485/environment/6602988-ca9ebc0d-1512-40a8-8145-8495ebf0b111?action=share&source=copy-link&creator=6602988
   - The enviroment needs to contain a "jwt_token" variable for setting after running the **POST method "api\Auth\login"**
+  
+Personal Task Tracking:
+  - https://mykanbanproject.atlassian.net/jira/software/projects/DEV/boards/2?atlOrigin=eyJpIjoiZjEzOTU5MGZlOWFhNDJkYmE5Y2I5MmYzZjA2ODU0OTMiLCJwIjoiaiJ9

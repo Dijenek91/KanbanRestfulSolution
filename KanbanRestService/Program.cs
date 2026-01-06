@@ -14,7 +14,6 @@ using Microsoft.EntityFrameworkCore;
 using Microsoft.IdentityModel.Tokens;
 using Scalar.AspNetCore;
 using System.Text;
-using static Microsoft.EntityFrameworkCore.DbLoggerCategory;
 
 namespace KanbanRestService
 {
@@ -28,6 +27,16 @@ namespace KanbanRestService
 
             // HTTP request pipeline configuration
             var app = builder.Build();
+
+            // Apply migrations automatically in Docker and Development environments
+            // This ensures the database schema is up-to-date without manual intervention
+            // In Production, migrations should be handled in CI\CT separately to avoid unintended downtime
+            if (app.Environment.IsEnvironment("Docker") || app.Environment.IsDevelopment())
+            {
+                var scope = app.Services.CreateScope();
+                var db = scope.ServiceProvider.GetRequiredService<KanbanAppDbContext>();
+                db.Database.Migrate();
+            }
 
             app.UseMiddleware<GlobalExceptionMiddleware>();
 
@@ -57,8 +66,8 @@ namespace KanbanRestService
             builder.Services.AddOpenApi();
 
             //DB related services
-            builder.Services.AddDbContext<KanbanAppDbContext>(options =>
-                options.UseSqlServer(builder.Configuration.GetConnectionString("DefaultConnection")));
+            AddDbContextBasedOnEnvironmnet(builder);
+
             builder.Services.AddScoped<IUnitOfWork<KanbanAppDbContext>, GenericUnitOfWork<KanbanAppDbContext>>();
             builder.Services.AddScoped(typeof(IGenericRepository<>), typeof(GenericRepository<>));
 
@@ -90,37 +99,84 @@ namespace KanbanRestService
             AddCorsToBuilder(builder);
         }
 
+        private static void AddDbContextBasedOnEnvironmnet(WebApplicationBuilder builder)
+        {
+            builder.Services.AddDbContext<KanbanAppDbContext>((sp, options) =>
+            {
+                var hostEnvrionment = sp.GetRequiredService<IHostEnvironment>();
+                var config = sp.GetRequiredService<IConfiguration>();
+                var connectionString = config.GetConnectionString("DefaultConnection");
+
+                Console.WriteLine($"Enviroment: {hostEnvrionment.EnvironmentName}");
+                Console.WriteLine($"Db connection string: {connectionString}");
+
+                if (hostEnvrionment.EnvironmentName == "Docker")
+                {
+                    options.UseNpgsql(
+                        connectionString,
+                        b => b.MigrationsAssembly("MigrationPostgresSql"));
+                }
+                else
+                {
+                    options.UseSqlServer(
+                        connectionString,
+                        b => b.MigrationsAssembly("MigrationSqlServer"));
+                }
+            });
+        }
+
         private static void AddSecurityTo(WebApplicationBuilder builder)
         {
-
-            var keyBytes = Encoding.UTF8.GetBytes(builder.Configuration["SuperSecretJwtKey"]);
-            builder.Services.AddAuthentication(
-                options =>
-                {
-                    options.DefaultAuthenticateScheme = JwtBearerDefaults.AuthenticationScheme;
-                    options.DefaultChallengeScheme = JwtBearerDefaults.AuthenticationScheme;
-                }
-                ).AddJwtBearer(options =>
-                {
-                    options.TokenValidationParameters = new TokenValidationParameters
+            if(!IsEfDesignTime())
+            { 
+                byte[] keyBytes = GetSecurityJwtKey(builder);
+                builder.Services.AddAuthentication(
+                    options =>
                     {
-                        ValidateIssuer = true,
-                        ValidateAudience = true,
-                        ValidateLifetime = true,
-                        ValidateIssuerSigningKey = true,
-                        ValidIssuer = builder.Configuration["Issuer"],
-                        ValidAudience = builder.Configuration["Audience"],
-                        IssuerSigningKey = new SymmetricSecurityKey(keyBytes)
-                    };
-                });
-
+                        options.DefaultAuthenticateScheme = JwtBearerDefaults.AuthenticationScheme;
+                        options.DefaultChallengeScheme = JwtBearerDefaults.AuthenticationScheme;
+                    }
+                    ).AddJwtBearer(options =>
+                    {
+                        options.TokenValidationParameters = new TokenValidationParameters
+                        {
+                            ValidateIssuer = true,
+                            ValidateAudience = true,
+                            ValidateLifetime = true,
+                            ValidateIssuerSigningKey = true,
+                            ValidIssuer = builder.Configuration["Issuer"],
+                            ValidAudience = builder.Configuration["Audience"],
+                            IssuerSigningKey = new SymmetricSecurityKey(keyBytes)
+                        };
+                    });
+            }
             if (!builder.Environment.IsDevelopment())
             {
                 return;
             }
-        
+
         }
-        
+
+        private static byte[] GetSecurityJwtKey(WebApplicationBuilder builder)
+        {
+            var jwtKey = builder.Configuration["SuperSecretJwtKey"];
+
+            if (string.IsNullOrWhiteSpace(jwtKey))
+            {
+                throw new InvalidOperationException(
+                    "SuperSecretJwtKey is missing. Set it via user secrets"
+                );
+            }
+
+            return Encoding.UTF8.GetBytes(jwtKey);
+        }
+
+        private static bool IsEfDesignTime()
+        {
+            return AppDomain.CurrentDomain.GetAssemblies()
+            .Any(a => a.FullName?.StartsWith("Microsoft.EntityFrameworkCore.Design") == true);
+        }
+    
 
         private static void AddCorsToBuilder(WebApplicationBuilder builder)
         {

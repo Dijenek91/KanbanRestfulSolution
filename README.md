@@ -10,25 +10,28 @@ It shall include:
   - OpenAPI3/SCALAR
   - Unit test + integration tests with 80+% coverage
   - Docker envrioment - app+db
-  - Authentication with JWT (must find net correlation)
+	- Bonus challange i did for myself:
+		- DOCKER envrionment: Use postgreSQL as a seperate container and db provider
+		- DEVELOPMENT envrionment: use microsoft SQL server
+  - Authentication with JWT
 
 Performance requirement:
   - on GET /api/tasks?page=0&size50 <= 150 ms on local laptop (whatever that means)
 
 CRUD operations:
-  -GetById - GET - /api/tasks
-  -GetAll - GET - /api/tasks/{id}
-  -Create - POST - /api/tasks
-  -Edit - PUT - /api/tasks/{id}
-  -Partial edit - PATCH - /api/tasks/{id} 
+  - GetById - GET - /api/tasks
+  - GetAll - GET - /api/tasks/{id}
+  - Create - POST - /api/tasks
+  - Edit - PUT - /api/tasks/{id}
+  - Partial edit - PATCH - /api/tasks/{id} 
     - DTO based approach for handling partial updated (JSON patch is an alternative)
-  -Delete - DELETE - /api/tasks/{id}
+  - Delete - DELETE - /api/tasks/{id}
 HATEOAS links for:
-  -GetById - GET - /api/tasks
-  -GetAll - GET - /api/tasks/{id}
+  - GetById - GET - /api/tasks
+  - GetAll - GET - /api/tasks/{id}
 
 Authenticaton\Authorization:
-  - Provided through use of JWT token generated in the Api\Auth service
+  - Provided through use of JWT token generated through http://localhost:8080/api/Auth/login
   - Username\password verification for requesteing the token is a dummy implementation and not a realworld implementation
   - SCALAR UI doesnt support JWT testing, so verification of this functionality needs to be done through Postman project
 
@@ -36,6 +39,20 @@ Testing and verification envrioment:
   - Postman project: https://web.postman.co/workspace/My-Workspace~3be1e0e9-c3e8-4732-800c-bb6ad975a485/collection/6602988-e533ff4c-6fa5-47d1-a054-6f2004b6fc6d?action=share&source=copy-link&creator=6602988
   - Make sure to set the enviroment to: https://web.postman.co/workspace/My-Workspace~3be1e0e9-c3e8-4732-800c-bb6ad975a485/environment/6602988-ca9ebc0d-1512-40a8-8145-8495ebf0b111?action=share&source=copy-link&creator=6602988
   - The enviroment needs to contain a "jwt_token" variable for setting after running the **POST method "api\Auth\login"**
+  - Note that depending on how you run the API (docker + postgresSQL or development + MicrosoftSQL) to hit the adequate URL
   
+To run the API alone using docker you have to set some enviroment variables for the JWT token like this:
+```powershell
+docker run --rm -p 8080:8080 `
+  -e SuperSecretJwtKey=supersecretkey12345678901234567890 `
+  -e Issuer=MyKanbanTaskApp `
+  -e Audience=MyKanbanTaskApp `
+  kanbanrestservice:dev'
+```
+Running the docker-compose.yaml for running the API and the PostgresSQL server as containers:
+	- Open powershell in solution root folder
+	- run cmd: ```docker compose build```
+	- run cmd: ```docker compose up```
+	
 Personal Task Tracking:
   - https://mykanbanproject.atlassian.net/jira/software/projects/DEV/boards/2?atlOrigin=eyJpIjoiZjEzOTU5MGZlOWFhNDJkYmE5Y2I5MmYzZjA2ODU0OTMiLCJwIjoiaiJ9

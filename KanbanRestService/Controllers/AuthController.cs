@@ -1,7 +1,6 @@
 ﻿using Microsoft.AspNetCore.Mvc;
 using Microsoft.IdentityModel.Tokens;
 using System.IdentityModel.Tokens.Jwt;
-using System.Security;
 using System.Security.Claims;
 using System.Text;
 
@@ -50,6 +49,9 @@ namespace KanbanRestService.Controllers
             var secretKey = _config["SuperSecretJwtKey"];
             var issuer = _config["Issuer"];
             var audience = _config["Audience"];
+
+            Console.WriteLine($"ISSUER: '{issuer}'");
+            Console.WriteLine($"AUDIENCE: '{audience}'");
 
             var keyBytes = Encoding.UTF8.GetBytes(secretKey);
             

@@ -1,0 +1,7 @@
+<Solution>
+  <Project Path="KanbanInfrastructure/KanbanInfrastructure.csproj" />
+  <Project Path="KanbanModel/KanbanModel.csproj" />
+  <Project Path="KanbanRestService/KanbanRestService.csproj" />
+  <Project Path="MigrationPostgresSql/MigrationPostgresSql.csproj" />
+  <Project Path="MigrationSqlServer/MigrationSqlServer.csproj" Id="4d91d3ff-3537-42ee-909b-e59137aeb864" />
+</Solution>

@@ -14,7 +14,6 @@ namespace KanbanRestService.GraphQL.Mutations
             return await taskService.CreateTaskAsync(createKanbanTask, cancellationToken);
         }
 
-
         public async Task<bool> FullUpdateTask(
             int id,
             FullUpdateKanbanTaskRequest updateKanbanTask,

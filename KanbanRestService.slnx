@@ -2,6 +2,7 @@
   <Project Path="KanbanInfrastructure/KanbanInfrastructure.csproj" />
   <Project Path="KanbanModel/KanbanModel.csproj" />
   <Project Path="KanbanRestService/KanbanRestService.csproj" />
+  <Project Path="KanbanTests/KanbanTests.csproj" Id="9a45d82b-79b2-476c-92ff-197dd219540e" />
   <Project Path="MigrationPostgresSql/MigrationPostgresSql.csproj" />
   <Project Path="MigrationSqlServer/MigrationSqlServer.csproj" Id="4d91d3ff-3537-42ee-909b-e59137aeb864" />
 </Solution>

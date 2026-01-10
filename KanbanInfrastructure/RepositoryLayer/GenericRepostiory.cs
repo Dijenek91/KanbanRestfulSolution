@@ -44,6 +44,11 @@ namespace KanbanInfrastructure.RepositoryLayer
             return Entities.AsQueryable();
         }
 
+        public Task<List<TEntity>> GetEntitiesBasedOn(IQueryable<TEntity> queryable, CancellationToken cancellationToken)
+        {
+            return queryable.ToListAsync();
+        }
+
         public async virtual Task<IEnumerable<TEntity>> GetAllRecordsAsync(CancellationToken cancellationToken)
         {
             return await Entities.ToListAsync(cancellationToken);
@@ -187,6 +192,8 @@ namespace KanbanInfrastructure.RepositoryLayer
         }
 
        
+
+
         #endregion
 
     }

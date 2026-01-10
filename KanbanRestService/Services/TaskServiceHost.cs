@@ -12,19 +12,19 @@ namespace KanbanRestService.Services
 {
     public class TaskServiceHost : ITaskService
     {
-        private IUnitOfWork<KanbanAppDbContext> _unitOfWork;
-        private IGenericRepository<KanbanTask> _taskRepo;
-        private readonly IHubContext<TasksHub> _tasksHubContext;
+        private readonly IUnitOfWork<KanbanAppDbContext> _unitOfWork;
+        private readonly IGenericRepository<KanbanTask> _taskRepo;
+        private readonly ITaskNotifications _notifications;
         private readonly IMapper _mapper;
 
         public TaskServiceHost(IUnitOfWork<KanbanAppDbContext> unitOfWork, 
-            IGenericRepository<KanbanTask> taskRepo, 
-            IHubContext<TasksHub> tasksHubContext,
+            IGenericRepository<KanbanTask> taskRepo,
+            ITaskNotifications notifications,
             IMapper mapper)
         {
             _unitOfWork = unitOfWork;
             _taskRepo = taskRepo;
-            _tasksHubContext = tasksHubContext;
+            _notifications = notifications;
             _mapper = mapper;
         }
 
@@ -34,8 +34,8 @@ namespace KanbanRestService.Services
             _taskRepo.Add(mappedKanbanTask);
             
             await _unitOfWork.SaveAsync(cancellationToken);
-            await _tasksHubContext.Clients.All.SendAsync("TaskCreated", mappedKanbanTask, cancellationToken);
-            
+            await _notifications.TaskCreated(mappedKanbanTask, cancellationToken);
+
             return mappedKanbanTask;
         }
 
@@ -54,7 +54,7 @@ namespace KanbanRestService.Services
             await _unitOfWork.SaveAsync(cancellationToken);
 
             
-            await _tasksHubContext.Clients.All.SendAsync("TaskDeleted", foundTask.Id, cancellationToken);
+            await _notifications.TaskDeleted(foundTask.Id, cancellationToken);
 
             return true;
         }
@@ -65,6 +65,8 @@ namespace KanbanRestService.Services
             int size,
             List<string>? sortFields)
         {
+            //service should not be responsible for creating queries, but the logic for pagination and sorting is a bit in its responsability
+            //if it would be a kanban -specific repository (not generic repository), it would make more sense to have it there, but since we have only generic repository, this is the best place for it
             var query = _taskRepo.GetQueryableEntities().AsNoTracking();
 
             if (!string.IsNullOrEmpty(status) && Enum.TryParse<StatusEnum>(status, true, out var statusEnum))
@@ -76,8 +78,9 @@ namespace KanbanRestService.Services
             query = ApplySorting(query, sortFields);
 
             //Pagination
-            var total = await query.CountAsync<KanbanTask>(cancellationToken);
-            var items = await query.Skip(page * size).Take(size).ToListAsync(cancellationToken);
+            query.Skip(page * size).Take(size);
+
+            var items = await _taskRepo.GetEntitiesBasedOn(query, cancellationToken);
 
             return items;
         }
@@ -100,7 +103,7 @@ namespace KanbanRestService.Services
 
             await _unitOfWork.SaveAsync(cancellationToken);
 
-            await _tasksHubContext.Clients.All.SendAsync("TaskUpdated", foundTask);
+            await _notifications.TaskUpdated(foundTask, cancellationToken);
 
             return true;
         }
@@ -122,13 +125,13 @@ namespace KanbanRestService.Services
             _taskRepo.Update(foundTask);
             await _unitOfWork.SaveAsync(cancellationToken);
 
-            await _tasksHubContext.Clients.All.SendAsync("TaskUpdated", foundTask);
+            await _notifications.TaskUpdated(foundTask, cancellationToken);
 
             return true;
         }
 
 
-        #region
+        #region Private methods
         private IQueryable<KanbanTask> ApplySorting(IQueryable<KanbanTask> query, List<string>? sortFields)
         {
             if (sortFields == null || sortFields.Count == 0)

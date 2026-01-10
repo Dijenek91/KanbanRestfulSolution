@@ -70,6 +70,7 @@ namespace KanbanRestService
 
             builder.Services.AddScoped<IUnitOfWork<KanbanAppDbContext>, GenericUnitOfWork<KanbanAppDbContext>>();
             builder.Services.AddScoped(typeof(IGenericRepository<>), typeof(GenericRepository<>));
+            builder.Services.AddScoped<ITaskNotifications, SignalRTaskNotification>();
 
             //Controller related services
             builder.Services.AddAutoMapper(cfg =>

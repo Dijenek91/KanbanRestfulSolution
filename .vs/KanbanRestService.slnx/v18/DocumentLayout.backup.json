@@ -3,6 +3,58 @@
   "WorkspaceRootPath": "C:\\Users\\brati\\source\\repos\\",
   "Documents": [
     {
+      "AbsoluteMoniker": "D:0:0:{9A45D82B-79B2-476C-92FF-197DD219540E}|KanbanTests\\KanbanTests.csproj|c:\\users\\brati\\source\\repos\\kanbantests\\unit\\services\\taskservicetests.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}",
+      "RelativeMoniker": "D:0:0:{9A45D82B-79B2-476C-92FF-197DD219540E}|KanbanTests\\KanbanTests.csproj|solutionrelative:kanbantests\\unit\\services\\taskservicetests.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}"
+    },
+    {
+      "AbsoluteMoniker": "D:0:0:{53AC96EA-5805-2523-1A27-B5E4F9C1902D}|KanbanInfrastructure\\KanbanInfrastructure.csproj|c:\\users\\brati\\source\\repos\\kanbaninfrastructure\\repositorylayer\\igenericrepository.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}",
+      "RelativeMoniker": "D:0:0:{53AC96EA-5805-2523-1A27-B5E4F9C1902D}|KanbanInfrastructure\\KanbanInfrastructure.csproj|solutionrelative:kanbaninfrastructure\\repositorylayer\\igenericrepository.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}"
+    },
+    {
+      "AbsoluteMoniker": "D:0:0:{53AC96EA-5805-2523-1A27-B5E4F9C1902D}|KanbanInfrastructure\\KanbanInfrastructure.csproj|c:\\users\\brati\\source\\repos\\kanbaninfrastructure\\repositorylayer\\genericrepostiory.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}",
+      "RelativeMoniker": "D:0:0:{53AC96EA-5805-2523-1A27-B5E4F9C1902D}|KanbanInfrastructure\\KanbanInfrastructure.csproj|solutionrelative:kanbaninfrastructure\\repositorylayer\\genericrepostiory.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}"
+    },
+    {
+      "AbsoluteMoniker": "D:0:0:{1EDF9934-AE87-1A4D-6E7E-4ADDDB87956D}|KanbanRestService\\KanbanRestService.csproj|c:\\users\\brati\\source\\repos\\kanbanrestservice\\services\\taskservicehost.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}",
+      "RelativeMoniker": "D:0:0:{1EDF9934-AE87-1A4D-6E7E-4ADDDB87956D}|KanbanRestService\\KanbanRestService.csproj|solutionrelative:kanbanrestservice\\services\\taskservicehost.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}"
+    },
+    {
+      "AbsoluteMoniker": "D:0:0:{1EDF9934-AE87-1A4D-6E7E-4ADDDB87956D}|KanbanRestService\\KanbanRestService.csproj|c:\\users\\brati\\source\\repos\\kanbanrestservice\\services\\itaskservice.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}",
+      "RelativeMoniker": "D:0:0:{1EDF9934-AE87-1A4D-6E7E-4ADDDB87956D}|KanbanRestService\\KanbanRestService.csproj|solutionrelative:kanbanrestservice\\services\\itaskservice.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}"
+    },
+    {
+      "AbsoluteMoniker": "D:0:0:{1EDF9934-AE87-1A4D-6E7E-4ADDDB87956D}|KanbanRestService\\KanbanRestService.csproj|c:\\users\\brati\\source\\repos\\kanbanrestservice\\controllers\\taskscontroller.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}",
+      "RelativeMoniker": "D:0:0:{1EDF9934-AE87-1A4D-6E7E-4ADDDB87956D}|KanbanRestService\\KanbanRestService.csproj|solutionrelative:kanbanrestservice\\controllers\\taskscontroller.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}"
+    },
+    {
+      "AbsoluteMoniker": "D:0:0:{1EDF9934-AE87-1A4D-6E7E-4ADDDB87956D}|KanbanRestService\\KanbanRestService.csproj|c:\\users\\brati\\source\\repos\\kanbanrestservice\\hubs\\signalrtasknotification.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}",
+      "RelativeMoniker": "D:0:0:{1EDF9934-AE87-1A4D-6E7E-4ADDDB87956D}|KanbanRestService\\KanbanRestService.csproj|solutionrelative:kanbanrestservice\\hubs\\signalrtasknotification.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}"
+    },
+    {
+      "AbsoluteMoniker": "D:0:0:{1EDF9934-AE87-1A4D-6E7E-4ADDDB87956D}|KanbanRestService\\KanbanRestService.csproj|c:\\users\\brati\\source\\repos\\kanbanrestservice\\program.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}",
+      "RelativeMoniker": "D:0:0:{1EDF9934-AE87-1A4D-6E7E-4ADDDB87956D}|KanbanRestService\\KanbanRestService.csproj|solutionrelative:kanbanrestservice\\program.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}"
+    },
+    {
+      "AbsoluteMoniker": "D:0:0:{1EDF9934-AE87-1A4D-6E7E-4ADDDB87956D}|KanbanRestService\\KanbanRestService.csproj|c:\\users\\brati\\source\\repos\\kanbanrestservice\\hubs\\itasknotification.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}",
+      "RelativeMoniker": "D:0:0:{1EDF9934-AE87-1A4D-6E7E-4ADDDB87956D}|KanbanRestService\\KanbanRestService.csproj|solutionrelative:kanbanrestservice\\hubs\\itasknotification.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}"
+    },
+    {
+      "AbsoluteMoniker": "D:0:0:{1EDF9934-AE87-1A4D-6E7E-4ADDDB87956D}|KanbanRestService\\KanbanRestService.csproj|c:\\users\\brati\\source\\repos\\kanbanrestservice\\hubs\\taskshub.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}",
+      "RelativeMoniker": "D:0:0:{1EDF9934-AE87-1A4D-6E7E-4ADDDB87956D}|KanbanRestService\\KanbanRestService.csproj|solutionrelative:kanbanrestservice\\hubs\\taskshub.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}"
+    },
+    {
+      "AbsoluteMoniker": "D:0:0:{290BFF5A-8758-82E5-0EC2-CC8616129D2A}|KanbanModel\\KanbanModel.csproj|c:\\users\\brati\\source\\repos\\kanbanmodel\\dtos\\mapping\\taskprofile.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}",
+      "RelativeMoniker": "D:0:0:{290BFF5A-8758-82E5-0EC2-CC8616129D2A}|KanbanModel\\KanbanModel.csproj|solutionrelative:kanbanmodel\\dtos\\mapping\\taskprofile.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}"
+    },
+    {
+      "AbsoluteMoniker": "D:0:0:{1EDF9934-AE87-1A4D-6E7E-4ADDDB87956D}|KanbanRestService\\KanbanRestService.csproj|c:\\users\\brati\\source\\repos\\kanbanrestservice\\controllers\\authcontroller.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}",
+      "RelativeMoniker": "D:0:0:{1EDF9934-AE87-1A4D-6E7E-4ADDDB87956D}|KanbanRestService\\KanbanRestService.csproj|solutionrelative:kanbanrestservice\\controllers\\authcontroller.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}"
+    },
+    {
+      "AbsoluteMoniker": "D:0:0:{1EDF9934-AE87-1A4D-6E7E-4ADDDB87956D}|KanbanRestService\\KanbanRestService.csproj|c:\\users\\brati\\source\\repos\\kanbanrestservice\\factories\\taskdtofactory.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}",
+      "RelativeMoniker": "D:0:0:{1EDF9934-AE87-1A4D-6E7E-4ADDDB87956D}|KanbanRestService\\KanbanRestService.csproj|solutionrelative:kanbanrestservice\\factories\\taskdtofactory.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}"
+    },
+    {
       "AbsoluteMoniker": "D:0:0:{9A45D82B-79B2-476C-92FF-197DD219540E}|KanbanTests\\KanbanTests.csproj|c:\\users\\brati\\source\\repos\\kanbantests\\class1.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}",
       "RelativeMoniker": "D:0:0:{9A45D82B-79B2-476C-92FF-197DD219540E}|KanbanTests\\KanbanTests.csproj|solutionrelative:kanbantests\\class1.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}"
     },
@@ -13,10 +65,6 @@
     {
       "AbsoluteMoniker": "D:0:0:{1EDF9934-AE87-1A4D-6E7E-4ADDDB87956D}|KanbanRestService\\KanbanRestService.csproj|c:\\users\\brati\\source\\repos\\kanbanrestservice\\graphql\\queries\\taskquery.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}",
       "RelativeMoniker": "D:0:0:{1EDF9934-AE87-1A4D-6E7E-4ADDDB87956D}|KanbanRestService\\KanbanRestService.csproj|solutionrelative:kanbanrestservice\\graphql\\queries\\taskquery.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}"
-    },
-    {
-      "AbsoluteMoniker": "D:0:0:{1EDF9934-AE87-1A4D-6E7E-4ADDDB87956D}|KanbanRestService\\KanbanRestService.csproj|c:\\users\\brati\\source\\repos\\kanbanrestservice\\program.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}",
-      "RelativeMoniker": "D:0:0:{1EDF9934-AE87-1A4D-6E7E-4ADDDB87956D}|KanbanRestService\\KanbanRestService.csproj|solutionrelative:kanbanrestservice\\program.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}"
     }
   ],
   "DocumentGroupContainers": [
@@ -26,37 +74,193 @@
       "DocumentGroups": [
         {
           "DockedWidth": 200,
-          "SelectedChildIndex": 0,
+          "SelectedChildIndex": 4,
           "Children": [
             {
               "$type": "Document",
+              "DocumentIndex": 2,
+              "Title": "GenericRepostiory.cs",
+              "DocumentMoniker": "C:\\Users\\brati\\source\\repos\\KanbanInfrastructure\\RepositoryLayer\\GenericRepostiory.cs",
+              "RelativeDocumentMoniker": "KanbanInfrastructure\\RepositoryLayer\\GenericRepostiory.cs",
+              "ToolTip": "C:\\Users\\brati\\source\\repos\\KanbanInfrastructure\\RepositoryLayer\\GenericRepostiory.cs",
+              "RelativeToolTip": "KanbanInfrastructure\\RepositoryLayer\\GenericRepostiory.cs",
+              "ViewState": "AgIAABcAAAAAAAAAAAAAAC4AAAAIAAAAAAAAAA==",
+              "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000738|",
+              "WhenOpened": "2026-01-10T17:30:47.559Z",
+              "EditorCaption": ""
+            },
+            {
+              "$type": "Document",
+              "DocumentIndex": 1,
+              "Title": "IGenericRepository.cs",
+              "DocumentMoniker": "C:\\Users\\brati\\source\\repos\\KanbanInfrastructure\\RepositoryLayer\\IGenericRepository.cs",
+              "RelativeDocumentMoniker": "KanbanInfrastructure\\RepositoryLayer\\IGenericRepository.cs",
+              "ToolTip": "C:\\Users\\brati\\source\\repos\\KanbanInfrastructure\\RepositoryLayer\\IGenericRepository.cs",
+              "RelativeToolTip": "KanbanInfrastructure\\RepositoryLayer\\IGenericRepository.cs",
+              "ViewState": "AgIAAAAAAAAAAAAAAAAqwAsAAABYAAAAAAAAAA==",
+              "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000738|",
+              "WhenOpened": "2026-01-10T17:21:19.98Z",
+              "EditorCaption": ""
+            },
+            {
+              "$type": "Document",
+              "DocumentIndex": 5,
+              "Title": "TasksController.cs",
+              "DocumentMoniker": "C:\\Users\\brati\\source\\repos\\KanbanRestService\\Controllers\\TasksController.cs",
+              "RelativeDocumentMoniker": "KanbanRestService\\Controllers\\TasksController.cs",
+              "ToolTip": "C:\\Users\\brati\\source\\repos\\KanbanRestService\\Controllers\\TasksController.cs",
+              "RelativeToolTip": "KanbanRestService\\Controllers\\TasksController.cs",
+              "ViewState": "AgIAABYAAAAAAAAAAAAgwDAAAABHAAAAAAAAAA==",
+              "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000738|",
+              "WhenOpened": "2026-01-10T17:13:34.369Z",
+              "EditorCaption": ""
+            },
+            {
+              "$type": "Document",
+              "DocumentIndex": 4,
+              "Title": "ITaskService.cs",
+              "DocumentMoniker": "C:\\Users\\brati\\source\\repos\\KanbanRestService\\Services\\ITaskService.cs",
+              "RelativeDocumentMoniker": "KanbanRestService\\Services\\ITaskService.cs",
+              "ToolTip": "C:\\Users\\brati\\source\\repos\\KanbanRestService\\Services\\ITaskService.cs",
+              "RelativeToolTip": "KanbanRestService\\Services\\ITaskService.cs",
+              "ViewState": "AgIAAAAAAAAAAAAAAAAqwAgAAAAfAAAAAAAAAA==",
+              "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000738|",
+              "WhenOpened": "2026-01-10T09:10:00.302Z",
+              "EditorCaption": ""
+            },
+            {
+              "$type": "Document",
               "DocumentIndex": 0,
+              "Title": "TaskServiceTests.cs",
+              "DocumentMoniker": "C:\\Users\\brati\\source\\repos\\KanbanTests\\Unit\\Services\\TaskServiceTests.cs",
+              "RelativeDocumentMoniker": "KanbanTests\\Unit\\Services\\TaskServiceTests.cs",
+              "ToolTip": "C:\\Users\\brati\\source\\repos\\KanbanTests\\Unit\\Services\\TaskServiceTests.cs",
+              "RelativeToolTip": "KanbanTests\\Unit\\Services\\TaskServiceTests.cs",
+              "ViewState": "AgIAAB4AAAAAAAAAAAAUwDAAAAAeAAAAAAAAAA==",
+              "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000738|",
+              "WhenOpened": "2026-01-10T09:06:06.529Z",
+              "EditorCaption": ""
+            },
+            {
+              "$type": "Document",
+              "DocumentIndex": 3,
+              "Title": "TaskServiceHost.cs",
+              "DocumentMoniker": "C:\\Users\\brati\\source\\repos\\KanbanRestService\\Services\\TaskServiceHost.cs",
+              "RelativeDocumentMoniker": "KanbanRestService\\Services\\TaskServiceHost.cs",
+              "ToolTip": "C:\\Users\\brati\\source\\repos\\KanbanRestService\\Services\\TaskServiceHost.cs",
+              "RelativeToolTip": "KanbanRestService\\Services\\TaskServiceHost.cs",
+              "ViewState": "AgIAADEAAAAAAAAAAAAwwEUAAABIAAAAAAAAAA==",
+              "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000738|",
+              "WhenOpened": "2026-01-10T08:50:33.894Z",
+              "EditorCaption": ""
+            },
+            {
+              "$type": "Document",
+              "DocumentIndex": 6,
+              "Title": "SignalRTaskNotification.cs",
+              "DocumentMoniker": "C:\\Users\\brati\\source\\repos\\KanbanRestService\\Hubs\\SignalRTaskNotification.cs",
+              "RelativeDocumentMoniker": "KanbanRestService\\Hubs\\SignalRTaskNotification.cs",
+              "ToolTip": "C:\\Users\\brati\\source\\repos\\KanbanRestService\\Hubs\\SignalRTaskNotification.cs",
+              "RelativeToolTip": "KanbanRestService\\Hubs\\SignalRTaskNotification.cs",
+              "ViewState": "AgIAAAAAAAAAAAAAAAAAAAkAAAAoAAAAAAAAAA==",
+              "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000738|",
+              "WhenOpened": "2026-01-10T16:32:12.36Z",
+              "EditorCaption": ""
+            },
+            {
+              "$type": "Document",
+              "DocumentIndex": 8,
+              "Title": "ITaskNotification.cs",
+              "DocumentMoniker": "C:\\Users\\brati\\source\\repos\\KanbanRestService\\Hubs\\ITaskNotification.cs",
+              "RelativeDocumentMoniker": "KanbanRestService\\Hubs\\ITaskNotification.cs",
+              "ToolTip": "C:\\Users\\brati\\source\\repos\\KanbanRestService\\Hubs\\ITaskNotification.cs",
+              "RelativeToolTip": "KanbanRestService\\Hubs\\ITaskNotification.cs",
+              "ViewState": "AgIAAAAAAAAAAAAAAAAAAAQAAAAFAAAAAAAAAA==",
+              "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000738|",
+              "WhenOpened": "2026-01-10T16:30:59.119Z",
+              "EditorCaption": ""
+            },
+            {
+              "$type": "Document",
+              "DocumentIndex": 9,
+              "Title": "TasksHub.cs",
+              "DocumentMoniker": "C:\\Users\\brati\\source\\repos\\KanbanRestService\\Hubs\\TasksHub.cs",
+              "RelativeDocumentMoniker": "KanbanRestService\\Hubs\\TasksHub.cs",
+              "ToolTip": "C:\\Users\\brati\\source\\repos\\KanbanRestService\\Hubs\\TasksHub.cs",
+              "RelativeToolTip": "KanbanRestService\\Hubs\\TasksHub.cs",
+              "ViewState": "AgIAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA==",
+              "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000738|",
+              "WhenOpened": "2026-01-10T16:18:20.911Z",
+              "EditorCaption": ""
+            },
+            {
+              "$type": "Document",
+              "DocumentIndex": 10,
+              "Title": "TaskProfile.cs",
+              "DocumentMoniker": "C:\\Users\\brati\\source\\repos\\KanbanModel\\DTOs\\Mapping\\TaskProfile.cs",
+              "RelativeDocumentMoniker": "KanbanModel\\DTOs\\Mapping\\TaskProfile.cs",
+              "ToolTip": "C:\\Users\\brati\\source\\repos\\KanbanModel\\DTOs\\Mapping\\TaskProfile.cs",
+              "RelativeToolTip": "KanbanModel\\DTOs\\Mapping\\TaskProfile.cs",
+              "ViewState": "AgIAAAMAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA==",
+              "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000738|",
+              "WhenOpened": "2026-01-10T08:53:23.497Z",
+              "EditorCaption": ""
+            },
+            {
+              "$type": "Document",
+              "DocumentIndex": 11,
+              "Title": "AuthController.cs",
+              "DocumentMoniker": "C:\\Users\\brati\\source\\repos\\KanbanRestService\\Controllers\\AuthController.cs",
+              "RelativeDocumentMoniker": "KanbanRestService\\Controllers\\AuthController.cs",
+              "ToolTip": "C:\\Users\\brati\\source\\repos\\KanbanRestService\\Controllers\\AuthController.cs",
+              "RelativeToolTip": "KanbanRestService\\Controllers\\AuthController.cs",
+              "ViewState": "AgIAABAAAAAAAAAAAAA1wB8AAAAAAAAAAAAAAA==",
+              "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000738|",
+              "WhenOpened": "2026-01-10T08:51:05.082Z",
+              "EditorCaption": ""
+            },
+            {
+              "$type": "Document",
+              "DocumentIndex": 12,
+              "Title": "TaskDTOFactory.cs",
+              "DocumentMoniker": "C:\\Users\\brati\\source\\repos\\KanbanRestService\\Factories\\TaskDTOFactory.cs",
+              "RelativeDocumentMoniker": "KanbanRestService\\Factories\\TaskDTOFactory.cs",
+              "ToolTip": "C:\\Users\\brati\\source\\repos\\KanbanRestService\\Factories\\TaskDTOFactory.cs",
+              "RelativeToolTip": "KanbanRestService\\Factories\\TaskDTOFactory.cs",
+              "ViewState": "AgIAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA==",
+              "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000738|",
+              "WhenOpened": "2026-01-10T08:50:49.796Z",
+              "EditorCaption": ""
+            },
+            {
+              "$type": "Document",
+              "DocumentIndex": 13,
               "Title": "Class1.cs",
               "DocumentMoniker": "C:\\Users\\brati\\source\\repos\\KanbanTests\\Class1.cs",
               "RelativeDocumentMoniker": "KanbanTests\\Class1.cs",
               "ToolTip": "C:\\Users\\brati\\source\\repos\\KanbanTests\\Class1.cs",
               "RelativeToolTip": "KanbanTests\\Class1.cs",
-              "ViewState": "AgIAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA==",
+              "ViewState": "AgIAAAAAAAAAAAAAAAAAAAcAAAAAAAAAAAAAAA==",
               "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000738|",
               "WhenOpened": "2026-01-10T08:25:22.351Z",
               "EditorCaption": ""
             },
             {
               "$type": "Document",
-              "DocumentIndex": 3,
+              "DocumentIndex": 7,
               "Title": "Program.cs",
               "DocumentMoniker": "C:\\Users\\brati\\source\\repos\\KanbanRestService\\Program.cs",
               "RelativeDocumentMoniker": "KanbanRestService\\Program.cs",
               "ToolTip": "C:\\Users\\brati\\source\\repos\\KanbanRestService\\Program.cs",
               "RelativeToolTip": "KanbanRestService\\Program.cs",
-              "ViewState": "AgIAAEoAAAAAAAAAAAAvwFsAAAAhAAAAAAAAAA==",
+              "ViewState": "AgIAADMAAAAAAAAAAAAnwEgAAABWAAAAAAAAAA==",
               "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000738|",
               "WhenOpened": "2026-01-06T12:40:43.588Z",
               "EditorCaption": ""
             },
             {
               "$type": "Document",
-              "DocumentIndex": 2,
+              "DocumentIndex": 15,
               "Title": "TaskQuery.cs",
               "DocumentMoniker": "C:\\Users\\brati\\source\\repos\\KanbanRestService\\GraphQL\\Queries\\TaskQuery.cs",
               "RelativeDocumentMoniker": "KanbanRestService\\GraphQL\\Queries\\TaskQuery.cs",
@@ -69,7 +273,7 @@
             },
             {
               "$type": "Document",
-              "DocumentIndex": 1,
+              "DocumentIndex": 14,
               "Title": "TaskMutation.cs",
               "DocumentMoniker": "C:\\Users\\brati\\source\\repos\\KanbanRestService\\GraphQL\\Mutations\\TaskMutation.cs",
               "RelativeDocumentMoniker": "KanbanRestService\\GraphQL\\Mutations\\TaskMutation.cs",

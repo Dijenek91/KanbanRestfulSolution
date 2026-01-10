@@ -6,6 +6,9 @@ namespace KanbanInfrastructure.RepositoryLayer
     {
         public IQueryable<TEntity> GetQueryableEntities(); //used for filtering, sorting, and pagination
 
+        //added for specific cases like pagination/sorting/filtering where we need to get list based on queryable
+        public Task<List<TEntity>> GetEntitiesBasedOn(IQueryable<TEntity> queryable, CancellationToken cancellationToken); 
+
         Task<IEnumerable<TEntity>> GetAllRecordsAsync(CancellationToken cancellationToken);
 
         Task<TEntity> FindAsync(int? entityId, CancellationToken cancellationToken);

@@ -41,7 +41,7 @@ namespace KanbanInfrastructure.RepositoryLayer
 
         public IQueryable<TEntity> GetQueryableEntities()
         {
-            return Entities.AsQueryable();
+            return Entities.AsQueryable().AsNoTracking();
         }
 
         public Task<List<TEntity>> GetEntitiesBasedOn(IQueryable<TEntity> queryable, CancellationToken cancellationToken)

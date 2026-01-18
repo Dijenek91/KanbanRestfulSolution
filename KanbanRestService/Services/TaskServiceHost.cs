@@ -67,7 +67,7 @@ namespace KanbanRestService.Services
         {
             //service should not be responsible for creating queries, but the logic for pagination and sorting is a bit in its responsability
             //if it would be a kanban -specific repository (not generic repository), it would make more sense to have it there, but since we have only generic repository, this is the best place for it
-            var query = _taskRepo.GetQueryableEntities().AsNoTracking();
+            var query = _taskRepo.GetQueryableEntities();
 
             if (!string.IsNullOrEmpty(status) && Enum.TryParse<StatusEnum>(status, true, out var statusEnum))
             {
@@ -78,7 +78,10 @@ namespace KanbanRestService.Services
             query = ApplySorting(query, sortFields);
 
             //Pagination
-            query.Skip(page * size).Take(size);
+            if (size > 0 && page >= 0)
+            {
+                query = query.Skip(page * size).Take(size);
+            }
 
             var items = await _taskRepo.GetEntitiesBasedOn(query, cancellationToken);
 
@@ -142,32 +145,54 @@ namespace KanbanRestService.Services
             foreach (var sort in sortFields)
             {
                 var parts = sort.Split(',');
-                var field = parts[0].Trim();
+                var field = parts[0].Trim().ToLowerInvariant(); ;
                 var direction = (parts.Length > 1 ? parts[1] : "asc").Trim().ToLower();
 
-                orderedQuery = ApplySingleSort(orderedQuery ?? query, field, direction);
+                orderedQuery = ApplySingleSort(orderedQuery, query, field, direction);
             }
 
             return orderedQuery ?? query;
         }
 
-        private IOrderedQueryable<KanbanTask> ApplySingleSort(IQueryable<KanbanTask> query, string field, string direction)
+        private IOrderedQueryable<KanbanTask> ApplySingleSort(IOrderedQueryable<KanbanTask>? orderedQuery, IQueryable<KanbanTask> query, string field, string direction)
         {
+            // First sort - aka Never sorted before
+            if (orderedQuery == null)
+            {
+                return (field, direction) switch
+                {
+                    ("name", "asc") => query.OrderBy(t => t.Name),
+                    ("name", "desc") => query.OrderByDescending(t => t.Name),
+
+                    ("priority", "asc") => query.OrderBy(t => t.PriorityEnum),
+                    ("priority", "desc") => query.OrderByDescending(t => t.PriorityEnum),
+
+                    ("status", "asc") => query.OrderBy(t => t.Status),
+                    ("status", "desc") => query.OrderByDescending(t => t.Status),
+
+                    ("size", "asc") => query.OrderBy(t => t.Size),
+                    ("size", "desc") => query.OrderByDescending(t => t.Size),
+
+                    _ => query.OrderBy(t => t.Id)
+                };
+            }
+            
+            //was already sorted by some field
             return (field, direction) switch
             {
-                ("name", "asc") => query.OrderBy(t => t.Name),
-                ("name", "desc") => query.OrderByDescending(t => t.Name),
+                ("name", "asc") => orderedQuery.ThenBy(t => t.Name),
+                ("name", "desc") => orderedQuery.ThenByDescending(t => t.Name),
 
-                ("priority", "asc") => query.OrderBy(t => t.PriorityEnum),
-                ("priority", "desc") => query.OrderByDescending(t => t.PriorityEnum),
+                ("priority", "asc") => orderedQuery.ThenBy(t => t.PriorityEnum),
+                ("priority", "desc") => orderedQuery.ThenByDescending(t => t.PriorityEnum),
 
-                ("status", "asc") => query.OrderBy(t => t.Status),
-                ("status", "desc") => query.OrderByDescending(t => t.Status),
+                ("status", "asc") => orderedQuery.ThenBy(t => t.Status),
+                ("status", "desc") => orderedQuery.ThenByDescending(t => t.Status),
 
-                ("size", "asc") => query.OrderBy(t => t.Size),
-                ("size", "desc") => query.OrderByDescending(t => t.Size),
+                ("size", "asc") => orderedQuery.ThenBy(t => t.Size),
+                ("size", "desc") => orderedQuery.ThenByDescending(t => t.Size),
 
-                _ => query.OrderBy(t => t.Id)
+                _ => orderedQuery.OrderBy(t => t.Id)
             };
         }
         #endregion

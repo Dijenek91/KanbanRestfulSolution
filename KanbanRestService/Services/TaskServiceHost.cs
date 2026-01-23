@@ -22,6 +22,15 @@ namespace KanbanRestService.Services
             ITaskNotifications notifications,
             IMapper mapper)
         {
+            if(unitOfWork == null)
+                throw new ArgumentNullException(nameof(unitOfWork), "[TaskServiceHost] Unit of work cannot be null.");
+            if (taskRepo == null)
+                throw new ArgumentNullException(nameof(taskRepo), "[TaskServiceHost] Task repository cannot be null.");
+            if (notifications == null)
+                throw new ArgumentNullException(nameof(notifications), "[TaskServiceHost] Task notification object cannot be null.");
+            if (mapper == null)
+                throw new ArgumentNullException(nameof(mapper), "[TaskServiceHost] Unit of work cannot be null.");
+
             _unitOfWork = unitOfWork;
             _taskRepo = taskRepo;
             _notifications = notifications;
@@ -30,7 +39,16 @@ namespace KanbanRestService.Services
 
         public async Task<KanbanTask> CreateTaskAsync(CreateKanbanTaskRequest createdTask, CancellationToken cancellationToken)
         {
+            if (createdTask == null)
+            {
+                throw new ArgumentNullException(nameof(createdTask), "[CreateTaskAsync] Created task cannot be null.");
+            }
+
             var mappedKanbanTask = _mapper.Map<KanbanTask>(createdTask);
+            if (mappedKanbanTask == null)
+            {
+                throw new InvalidOperationException("[CreateTaskAsync] Mapping produced null KanbanTask.");
+            }
             _taskRepo.Add(mappedKanbanTask);
             
             await _unitOfWork.SaveAsync(cancellationToken);

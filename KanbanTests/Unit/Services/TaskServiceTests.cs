@@ -1023,19 +1023,469 @@ namespace KanbanTests.Unit.Services
 
         #region PartialUpdateTaskAsync
         [Test]
-        public void PartialUpdateTask_x_x()
+        public void PartialUpdateTask_IdIsZero_ArgumentException()
         {
+            // arrange
+            int inputId = 0;
+            var updateTask = new PartialUpdateKanbanTaskRequest { Name = "partial update Task" };
+            var mapped = new KanbanTask { Id = 1, Name = updateTask.Name };
 
-            Assert.Pass("This is a placeholder test.");
+            _mapperMock.Setup(m => m.Map<KanbanTask>(It.IsAny<PartialUpdateKanbanTaskRequest>()))
+               .Returns(mapped);
+
+            _unitOfWorkMock.Setup(u => u.SaveAsync(It.IsAny<CancellationToken>()))
+                .Returns(Task.CompletedTask);
+
+            _notifierMock.Setup(n => n.TaskUpdated(It.IsAny<KanbanTask>(), It.IsAny<CancellationToken>()))
+                .Returns(Task.CompletedTask);
+
+            // act + assert
+            Assert.Throws<ArgumentException>(() =>
+                _taskService.PartialUpdateTaskAsync(inputId, updateTask, CancellationToken.None).GetAwaiter().GetResult());
+
+            // assert
+            _repoMock.Verify(r => r.FindAsync(It.IsAny<int>(), It.IsAny<CancellationToken>()), Times.Never);
+            _repoMock.Verify(r => r.Update(It.IsAny<KanbanTask>()), Times.Never);
+            _unitOfWorkMock.Verify(u => u.SaveAsync(It.IsAny<CancellationToken>()), Times.Never);
+            _notifierMock.Verify(n => n.TaskCreated(It.IsAny<KanbanTask>(), It.IsAny<CancellationToken>()), Times.Never);
+        }
+
+        [Test]
+        public void PartialUpdateTask_TaskNotFound_ReturnsFalseAndDoesNotCallUpdateSaveOrNotify()
+        {
+            // arrange
+            var request = new PartialUpdateKanbanTaskRequest { Name = "updated" };
+
+            _repoMock.Setup(r => r.FindAsync(It.IsAny<int>(), It.IsAny<CancellationToken>()))
+                .ReturnsAsync((KanbanTask?)null);
+
+            // act
+            var result = _taskService.PartialUpdateTaskAsync(123, request, CancellationToken.None).Result;
+
+            // assert
+            Assert.That(result, Is.False);
+            _repoMock.Verify(r => r.Update(It.IsAny<KanbanTask>()), Times.Never);
+            _unitOfWorkMock.Verify(u => u.SaveAsync(It.IsAny<CancellationToken>()), Times.Never);
+            _notifierMock.Verify(n => n.TaskUpdated(It.IsAny<KanbanTask>(), It.IsAny<CancellationToken>()), Times.Never);
+        }
+
+        [Test]
+        public void PartialUpdateTask_TaskFound_MapsUpdatesAndSavesAndNotifies_ReturnsTrue()
+        {
+            // arrange
+            var found = new KanbanTask { Id = 5, Name = "old", Description = "olddesc" };
+            var request = new PartialUpdateKanbanTaskRequest { Name = "newname" };
+
+            _repoMock.Setup(r => r.FindAsync(found.Id, It.IsAny<CancellationToken>()))
+                .ReturnsAsync(found);
+
+            // make mapper apply the update to the found instance and return it
+            _mapperMock.Setup(m => m.Map(It.IsAny<PartialUpdateKanbanTaskRequest>(), It.IsAny<KanbanTask>()))
+                .Callback<PartialUpdateKanbanTaskRequest, KanbanTask>((req, dest) =>
+                {
+                    if (req.Name != null) dest.Name = req.Name;
+                    if (req.Description != null) dest.Description = req.Description;
+                })
+                .Returns<PartialUpdateKanbanTaskRequest, KanbanTask>((req, dest) => dest);
+
+            _repoMock.Setup(r => r.Update(It.IsAny<KanbanTask>())).Verifiable();
+
+            _unitOfWorkMock.Setup(u => u.SaveAsync(It.IsAny<CancellationToken>()))
+                .Returns(Task.CompletedTask).Verifiable();
+
+            _notifierMock.Setup(n => n.TaskUpdated(It.IsAny<KanbanTask>(), It.IsAny<CancellationToken>()))
+                .Returns(Task.CompletedTask).Verifiable();
+
+            // act
+            var result = _taskService.PartialUpdateTaskAsync(found.Id, request, CancellationToken.None).Result;
+
+            // assert
+            Assert.That(result, Is.True);
+            Assert.That(found.Name, Is.EqualTo("newname")); // mapper applied changes
+            _repoMock.Verify(r => r.Update(It.Is<KanbanTask>(t => t == found)), Times.Once);
+            _unitOfWorkMock.Verify(u => u.SaveAsync(It.IsAny<CancellationToken>()), Times.Once);
+            _notifierMock.Verify(n => n.TaskUpdated(It.Is<KanbanTask>(t => t == found), It.IsAny<CancellationToken>()), Times.Once);
+        }
+
+        [Test]
+        public void PartialUpdateTask_FindThrows_ExceptionPropagates()
+        {
+            // arrange
+            var request = new PartialUpdateKanbanTaskRequest { Name = "x" };
+
+            _repoMock.Setup(r => r.FindAsync(It.IsAny<int>(), It.IsAny<CancellationToken>()))
+                .ThrowsAsync(new InvalidOperationException("find failed"));
+
+            // act + assert
+            Assert.Throws<InvalidOperationException>(() =>
+                _taskService.PartialUpdateTaskAsync(1, request, CancellationToken.None).GetAwaiter().GetResult());
+        }
+
+        [Test]
+        public void PartialUpdateTask_SaveAsyncThrows_NotifierNotCalledAndExceptionPropagates()
+        {
+            // arrange
+            var found = new KanbanTask { Id = 6, Name = "toUpdate" };
+            var request = new PartialUpdateKanbanTaskRequest { Name = "updated" };
+
+            _repoMock.Setup(r => r.FindAsync(found.Id, It.IsAny<CancellationToken>()))
+                .ReturnsAsync(found);
+
+            _mapperMock.Setup(m => m.Map(It.IsAny<PartialUpdateKanbanTaskRequest>(), It.IsAny<KanbanTask>()))
+                .Returns<PartialUpdateKanbanTaskRequest, KanbanTask>((req, dest) => { dest.Name = req.Name ?? dest.Name; return dest; });
+
+            _repoMock.Setup(r => r.Update(It.IsAny<KanbanTask>())).Verifiable();
+
+            _unitOfWorkMock.Setup(u => u.SaveAsync(It.IsAny<CancellationToken>()))
+                .ThrowsAsync(new InvalidOperationException("save failed"));
+
+            _notifierMock.Setup(n => n.TaskUpdated(It.IsAny<KanbanTask>(), It.IsAny<CancellationToken>()))
+                .Returns(Task.CompletedTask);
+
+            // act + assert
+            Assert.Throws<InvalidOperationException>(() =>
+                _taskService.PartialUpdateTaskAsync(found.Id, request, CancellationToken.None).GetAwaiter().GetResult());
+
+            _repoMock.Verify(r => r.Update(It.Is<KanbanTask>(t => t == found)), Times.Once);
+            _unitOfWorkMock.Verify(u => u.SaveAsync(It.IsAny<CancellationToken>()), Times.Once);
+            _notifierMock.Verify(n => n.TaskUpdated(It.IsAny<KanbanTask>(), It.IsAny<CancellationToken>()), Times.Never);
+        }
+
+        [Test]
+        public void PartialUpdateTask_NotifierThrows_ExceptionPropagates_ButSaveAlreadyCalled()
+        {
+            // arrange
+            var found = new KanbanTask { Id = 8, Name = "toNotify" };
+            var request = new PartialUpdateKanbanTaskRequest { Name = "updated" };
+
+            _repoMock.Setup(r => r.FindAsync(found.Id, It.IsAny<CancellationToken>()))
+                .ReturnsAsync(found);
+
+            _mapperMock.Setup(m => m.Map(It.IsAny<PartialUpdateKanbanTaskRequest>(), It.IsAny<KanbanTask>()))
+                .Returns<PartialUpdateKanbanTaskRequest, KanbanTask>((req, dest) => { dest.Name = req.Name ?? dest.Name; return dest; });
+
+            _repoMock.Setup(r => r.Update(It.IsAny<KanbanTask>())).Verifiable();
+            _unitOfWorkMock.Setup(u => u.SaveAsync(It.IsAny<CancellationToken>())).Returns(Task.CompletedTask).Verifiable();
+
+            _notifierMock.Setup(n => n.TaskUpdated(found, It.IsAny<CancellationToken>()))
+                .ThrowsAsync(new InvalidOperationException("notify failed"));
+
+            // act + assert
+            Assert.Throws<InvalidOperationException>(() =>
+                _taskService.PartialUpdateTaskAsync(found.Id, request, CancellationToken.None).GetAwaiter().GetResult());
+
+            _repoMock.Verify(r => r.Update(It.Is<KanbanTask>(t => t == found)), Times.Once);
+            _unitOfWorkMock.Verify(u => u.SaveAsync(It.IsAny<CancellationToken>()), Times.Once);
+            _notifierMock.Verify(n => n.TaskUpdated(found, It.IsAny<CancellationToken>()), Times.Once);
+        }
+
+        [Test]
+        public void PartialUpdateTask_CancellationTokenForwardedToFindSaveAndNotify()
+        {
+            // arrange
+            var found = new KanbanTask { Id = 10, Name = "token" };
+            var request = new PartialUpdateKanbanTaskRequest { Name = "tok" };
+
+            CancellationToken capturedFind = default;
+            CancellationToken capturedSave = default;
+            CancellationToken capturedNotify = default;
+            var cts = new CancellationTokenSource();
+
+            _repoMock.Setup(r => r.FindAsync(It.IsAny<int>(), It.IsAny<CancellationToken>()))
+                .ReturnsAsync((int id, CancellationToken ct) =>
+                {
+                    capturedFind = ct;
+                    return found;
+                });
+
+            _mapperMock.Setup(m => m.Map(It.IsAny<PartialUpdateKanbanTaskRequest>(), It.IsAny<KanbanTask>()))
+                .Returns<PartialUpdateKanbanTaskRequest, KanbanTask>((req, dest) => { dest.Name = req.Name ?? dest.Name; return dest; });
+
+            _unitOfWorkMock.Setup(u => u.SaveAsync(It.IsAny<CancellationToken>()))
+                .Callback((CancellationToken ct) => capturedSave = ct)
+                .Returns(Task.CompletedTask);
+
+            _notifierMock.Setup(n => n.TaskUpdated(It.IsAny<KanbanTask>(), It.IsAny<CancellationToken>()))
+                .Callback((KanbanTask t, CancellationToken ct) => capturedNotify = ct)
+                .Returns(Task.CompletedTask);
+
+            // act
+            var result = _taskService.PartialUpdateTaskAsync(found.Id, request, cts.Token).Result;
+
+            // assert
+            Assert.That(result, Is.True);
+            Assert.That(capturedFind, Is.EqualTo(cts.Token));
+            Assert.That(capturedSave, Is.EqualTo(cts.Token));
+            Assert.That(capturedNotify, Is.EqualTo(cts.Token));
         }
         #endregion
 
         #region UpdateTaskAsync
+        
         [Test]
-        public void UpdateTask_x_x()
+        public void UpdateTask_IdZero_ThrowsArgumentException()
         {
+            // arrange
+            var request = new FullUpdateKanbanTaskRequest { Name = "x" };
 
-            Assert.Pass("This is a placeholder test.");
+            // act + assert
+            Assert.Throws<ArgumentException>(() =>
+                _taskService.UpdateTaskAsync(0, request, CancellationToken.None).GetAwaiter().GetResult());
+
+            // verify no repository calls
+            _repoMock.Verify(r => r.FindAsync(It.IsAny<int>(), It.IsAny<CancellationToken>()), Times.Never);
+            _unitOfWorkMock.Verify(u => u.SaveAsync(It.IsAny<CancellationToken>()), Times.Never);
+            _notifierMock.Verify(n => n.TaskUpdated(It.IsAny<KanbanTask>(), It.IsAny<CancellationToken>()), Times.Never);
+        }
+
+        [Test]
+        public void UpdateTask_NullRequest_ThrowsArgumentException()
+        {
+            // arrange
+            FullUpdateKanbanTaskRequest request = null;
+
+            // act + assert
+            Assert.Throws<ArgumentException>(() =>
+                _taskService.UpdateTaskAsync(1, request, CancellationToken.None).GetAwaiter().GetResult());
+
+            // verify find not called
+            _repoMock.Verify(r => r.FindAsync(It.IsAny<int>(), It.IsAny<CancellationToken>()), Times.Never);
+        }
+
+        [Test]
+        public void UpdateTask_TaskNotFound_ReturnsFalseAndDoesNotCallUpdateSaveOrNotify()
+        {
+            // arrange
+            var request = new FullUpdateKanbanTaskRequest { Name = "new" };
+
+            _repoMock.Setup(r => r.FindAsync(It.IsAny<int>(), It.IsAny<CancellationToken>()))
+                .ReturnsAsync((KanbanTask?)null);
+
+            // act
+            var result = _taskService.UpdateTaskAsync(99, request, CancellationToken.None).Result;
+
+            // assert
+            Assert.That(result, Is.False);
+            _repoMock.Verify(r => r.Update(It.IsAny<KanbanTask>()), Times.Never);
+            _unitOfWorkMock.Verify(u => u.SaveAsync(It.IsAny<CancellationToken>()), Times.Never);
+            _notifierMock.Verify(n => n.TaskUpdated(It.IsAny<KanbanTask>(), It.IsAny<CancellationToken>()), Times.Never);
+        }
+
+        [Test]
+        public void UpdateTask_ValidRequest_MapsUpdatesSavesAndNotifies_ReturnsTrue()
+        {
+            // arrange
+            var found = new KanbanTask
+            {
+                Id = 21,
+                Name = "OldName",
+                Description = "OldDesc",
+                Size = 1,
+                PriorityEnum = PriorityEnum.Low,
+                Status = StatusEnum.ToDo
+            };
+
+            var updateRequest = new FullUpdateKanbanTaskRequest
+            {
+                Name = "NewName",
+                Description = "NewDesc",
+                Size = 3,
+                PriorityEnum = PriorityEnum.High,
+                Status = StatusEnum.Completed
+            };
+
+            _repoMock.Setup(r => r.FindAsync(found.Id, It.IsAny<CancellationToken>()))
+                .ReturnsAsync(found);
+
+            _mapperMock.Setup(m => m.Map(It.IsAny<FullUpdateKanbanTaskRequest>(), It.IsAny<KanbanTask>()))
+                .Callback<FullUpdateKanbanTaskRequest, KanbanTask>((req, dest) =>
+                {
+                    dest.Name = req.Name;
+                    dest.Description = req.Description;
+                    dest.Size = req.Size;
+                    dest.PriorityEnum = req.PriorityEnum;
+                    dest.Status = req.Status;
+                })
+                .Returns<FullUpdateKanbanTaskRequest, KanbanTask>((req, dest) => dest);
+
+            _repoMock.Setup(r => r.Update(It.IsAny<KanbanTask>())).Verifiable();
+            _unitOfWorkMock.Setup(u => u.SaveAsync(It.IsAny<CancellationToken>())).Returns(Task.CompletedTask).Verifiable();
+            _notifierMock.Setup(n => n.TaskUpdated(It.IsAny<KanbanTask>(), It.IsAny<CancellationToken>())).Returns(Task.CompletedTask).Verifiable();
+
+            var cts = new CancellationTokenSource();
+
+            // act
+            var result = _taskService.UpdateTaskAsync(found.Id, updateRequest, cts.Token).Result;
+
+            // assert
+            Assert.That(result, Is.True);
+            Assert.That(found.Name, Is.EqualTo(updateRequest.Name));
+            Assert.That(found.Description, Is.EqualTo(updateRequest.Description));
+            Assert.That(found.Size, Is.EqualTo(updateRequest.Size));
+            Assert.That(found.PriorityEnum, Is.EqualTo(updateRequest.PriorityEnum));
+            Assert.That(found.Status, Is.EqualTo(updateRequest.Status));
+
+            _repoMock.Verify(r => r.Update(It.Is<KanbanTask>(t => t == found)), Times.Once);
+            _unitOfWorkMock.Verify(u => u.SaveAsync(It.Is<CancellationToken>(t => t == cts.Token)), Times.Once);
+            _notifierMock.Verify(n => n.TaskUpdated(It.Is<KanbanTask>(t => t == found), It.Is<CancellationToken>(t => t == cts.Token)), Times.Once);
+            _mapperMock.Verify(m => m.Map(updateRequest, found), Times.Once);
+        }
+
+        [Test]
+        public void UpdateTask_FindThrows_ExceptionPropagates()
+        {
+            // arrange
+            var request = new FullUpdateKanbanTaskRequest { Name = "x" };
+
+            _repoMock.Setup(r => r.FindAsync(It.IsAny<int>(), It.IsAny<CancellationToken>()))
+                .ThrowsAsync(new InvalidOperationException("find failed"));
+
+            // act + assert
+            Assert.Throws<InvalidOperationException>(() =>
+                _taskService.UpdateTaskAsync(1, request, CancellationToken.None).GetAwaiter().GetResult());
+        }
+
+        [Test]
+        public void UpdateTask_MapperThrows_ExceptionPropagates_NoSaveOrNotifyCalled()
+        {
+            // arrange
+            var found = new KanbanTask { Id = 31, Name = "old" };
+            var request = new FullUpdateKanbanTaskRequest { Name = "new" };
+
+            _repoMock.Setup(r => r.FindAsync(found.Id, It.IsAny<CancellationToken>()))
+                .ReturnsAsync(found);
+
+            _mapperMock.Setup(m => m.Map(It.IsAny<FullUpdateKanbanTaskRequest>(), It.IsAny<KanbanTask>()))
+                .Throws(new InvalidOperationException("mapper failure"));
+
+            // act + assert
+            Assert.Throws<InvalidOperationException>(() =>
+                _taskService.UpdateTaskAsync(found.Id, request, CancellationToken.None).GetAwaiter().GetResult());
+
+            _unitOfWorkMock.Verify(u => u.SaveAsync(It.IsAny<CancellationToken>()), Times.Never);
+            _notifierMock.Verify(n => n.TaskUpdated(It.IsAny<KanbanTask>(), It.IsAny<CancellationToken>()), Times.Never);
+        }
+
+        [Test]
+        public void UpdateTask_RepoUpdateThrows_ExceptionPropagates_NoSaveOrNotifyCalled()
+        {
+            // arrange
+            var found = new KanbanTask { Id = 41, Name = "old" };
+            var request = new FullUpdateKanbanTaskRequest { Name = "new" };
+
+            _repoMock.Setup(r => r.FindAsync(found.Id, It.IsAny<CancellationToken>()))
+                .ReturnsAsync(found);
+
+            _mapperMock.Setup(m => m.Map(It.IsAny<FullUpdateKanbanTaskRequest>(), It.IsAny<KanbanTask>()))
+                .Returns<FullUpdateKanbanTaskRequest, KanbanTask>((req, dest) => dest);
+
+            _repoMock.Setup(r => r.Update(It.IsAny<KanbanTask>()))
+                .Throws(new InvalidOperationException("update failed"));
+
+            // act + assert
+            Assert.Throws<InvalidOperationException>(() =>
+                _taskService.UpdateTaskAsync(found.Id, request, CancellationToken.None).GetAwaiter().GetResult());
+
+            _unitOfWorkMock.Verify(u => u.SaveAsync(It.IsAny<CancellationToken>()), Times.Never);
+            _notifierMock.Verify(n => n.TaskUpdated(It.IsAny<KanbanTask>(), It.IsAny<CancellationToken>()), Times.Never);
+        }
+
+        [Test]
+        public void UpdateTask_SaveAsyncThrows_NotifierNotCalledAndExceptionPropagates()
+        {
+            // arrange
+            var found = new KanbanTask { Id = 51, Name = "toUpdate" };
+            var request = new FullUpdateKanbanTaskRequest { Name = "updated" };
+
+            _repoMock.Setup(r => r.FindAsync(found.Id, It.IsAny<CancellationToken>()))
+                .ReturnsAsync(found);
+
+            _mapperMock.Setup(m => m.Map(It.IsAny<FullUpdateKanbanTaskRequest>(), It.IsAny<KanbanTask>()))
+                .Returns<FullUpdateKanbanTaskRequest, KanbanTask>((req, dest) => { dest.Name = req.Name ?? dest.Name; return dest; });
+
+            _repoMock.Setup(r => r.Update(It.IsAny<KanbanTask>())).Verifiable();
+
+            _unitOfWorkMock.Setup(u => u.SaveAsync(It.IsAny<CancellationToken>()))
+                .ThrowsAsync(new InvalidOperationException("save failed"));
+
+            _notifierMock.Setup(n => n.TaskUpdated(It.IsAny<KanbanTask>(), It.IsAny<CancellationToken>()))
+                .Returns(Task.CompletedTask);
+
+            // act + assert
+            Assert.Throws<InvalidOperationException>(() =>
+                _taskService.UpdateTaskAsync(found.Id, request, CancellationToken.None).GetAwaiter().GetResult());
+
+            _repoMock.Verify(r => r.Update(It.Is<KanbanTask>(t => t == found)), Times.Once);
+            _unitOfWorkMock.Verify(u => u.SaveAsync(It.IsAny<CancellationToken>()), Times.Once);
+            _notifierMock.Verify(n => n.TaskUpdated(It.IsAny<KanbanTask>(), It.IsAny<CancellationToken>()), Times.Never);
+        }
+
+        [Test]
+        public void UpdateTask_NotifierThrows_ExceptionPropagates_ButSaveAlreadyCalled()
+        {
+            // arrange
+            var found = new KanbanTask { Id = 61, Name = "toNotify" };
+            var request = new FullUpdateKanbanTaskRequest { Name = "updated" };
+
+            _repoMock.Setup(r => r.FindAsync(found.Id, It.IsAny<CancellationToken>()))
+                .ReturnsAsync(found);
+
+            _mapperMock.Setup(m => m.Map(It.IsAny<FullUpdateKanbanTaskRequest>(), It.IsAny<KanbanTask>()))
+                .Returns<FullUpdateKanbanTaskRequest, KanbanTask>((req, dest) => { dest.Name = req.Name ?? dest.Name; return dest; });
+
+            _repoMock.Setup(r => r.Update(It.IsAny<KanbanTask>())).Verifiable();
+            _unitOfWorkMock.Setup(u => u.SaveAsync(It.IsAny<CancellationToken>())).Returns(Task.CompletedTask).Verifiable();
+
+            _notifierMock.Setup(n => n.TaskUpdated(found, It.IsAny<CancellationToken>()))
+                .ThrowsAsync(new InvalidOperationException("notify failed"));
+
+            // act + assert
+            Assert.Throws<InvalidOperationException>(() =>
+                _taskService.UpdateTaskAsync(found.Id, request, CancellationToken.None).GetAwaiter().GetResult());
+
+            _repoMock.Verify(r => r.Update(It.Is<KanbanTask>(t => t == found)), Times.Once);
+            _unitOfWorkMock.Verify(u => u.SaveAsync(It.IsAny<CancellationToken>()), Times.Once);
+            _notifierMock.Verify(n => n.TaskUpdated(found, It.IsAny<CancellationToken>()), Times.Once);
+        }
+
+        [Test]
+        public void UpdateTask_CancellationTokenForwardedToFindSaveAndNotify()
+        {
+            // arrange
+            var found = new KanbanTask { Id = 71, Name = "token" };
+            var request = new FullUpdateKanbanTaskRequest { Name = "tok" };
+
+            CancellationToken capturedFind = default;
+            CancellationToken capturedSave = default;
+            CancellationToken capturedNotify = default;
+            var cts = new CancellationTokenSource();
+
+            _repoMock.Setup(r => r.FindAsync(It.IsAny<int>(), It.IsAny<CancellationToken>()))
+                .ReturnsAsync((int id, CancellationToken ct) =>
+                {
+                    capturedFind = ct;
+                    return found;
+                });
+
+            _mapperMock.Setup(m => m.Map(It.IsAny<FullUpdateKanbanTaskRequest>(), It.IsAny<KanbanTask>()))
+                .Returns<FullUpdateKanbanTaskRequest, KanbanTask>((req, dest) => { dest.Name = req.Name ?? dest.Name; return dest; });
+
+            _unitOfWorkMock.Setup(u => u.SaveAsync(It.IsAny<CancellationToken>()))
+                .Callback((CancellationToken ct) => capturedSave = ct)
+                .Returns(Task.CompletedTask);
+
+            _notifierMock.Setup(n => n.TaskUpdated(It.IsAny<KanbanTask>(), It.IsAny<CancellationToken>()))
+                .Callback((KanbanTask t, CancellationToken ct) => capturedNotify = ct)
+                .Returns(Task.CompletedTask);
+
+            // act
+            var result = _taskService.UpdateTaskAsync(found.Id, request, cts.Token).Result;
+
+            // assert
+            Assert.That(result, Is.True);
+            Assert.That(capturedFind, Is.EqualTo(cts.Token));
+            Assert.That(capturedSave, Is.EqualTo(cts.Token));
+            Assert.That(capturedNotify, Is.EqualTo(cts.Token));
         }
         #endregion
 

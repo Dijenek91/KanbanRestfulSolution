@@ -17,7 +17,8 @@ namespace KanbanRestService.Services
         private readonly ITaskNotifications _notifications;
         private readonly IMapper _mapper;
 
-        public TaskServiceHost(IUnitOfWork<KanbanAppDbContext> unitOfWork, 
+        public TaskServiceHost(
+            IUnitOfWork<KanbanAppDbContext> unitOfWork, 
             IGenericRepository<KanbanTask> taskRepo,
             ITaskNotifications notifications,
             IMapper mapper)
@@ -113,12 +114,14 @@ namespace KanbanRestService.Services
 
         public async Task<bool> PartialUpdateTaskAsync(int id, PartialUpdateKanbanTaskRequest taskRequest, CancellationToken cancellationToken)
         {
+            CheckUpdateParametersAndThrowException(id, taskRequest);
+
             var foundTask = await _taskRepo.FindAsync(id, cancellationToken);
             if (foundTask == null)
                 return false;
 
             // Update only properties that were sent (NOT NULL)
-            _mapper.Map(taskRequest, foundTask);   
+            _mapper.Map(taskRequest, foundTask);
 
             _taskRepo.Update(foundTask);
 
@@ -129,10 +132,13 @@ namespace KanbanRestService.Services
             return true;
         }
 
+       
         public async Task<bool> UpdateTaskAsync(int id, FullUpdateKanbanTaskRequest taskRequest, CancellationToken cancellationToken)
         {
             if (id == 0)
                 throw new ArgumentException("ID with 0 doesn't exist.");
+            if (taskRequest == null)
+                throw new ArgumentException("taskRequest parameter with update data cannot be NULL.");
 
 
             var foundTask = await _taskRepo.FindAsync(id, cancellationToken);
@@ -153,6 +159,16 @@ namespace KanbanRestService.Services
 
 
         #region Private methods
+
+        private static void CheckUpdateParametersAndThrowException(int id, PartialUpdateKanbanTaskRequest taskRequest)
+        {
+            if (id == 0)
+                throw new ArgumentException("ID with 0 doesn't exist.");
+            if (taskRequest == null)
+                throw new ArgumentException("taskRequest parameter with update data cannot be NULL.");
+        }
+
+
         private IQueryable<KanbanTask> ApplySorting(IQueryable<KanbanTask> query, List<string>? sortFields)
         {
             if (sortFields == null || sortFields.Count == 0)

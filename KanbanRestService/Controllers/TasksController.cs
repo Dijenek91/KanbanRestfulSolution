@@ -33,7 +33,6 @@ namespace KanbanRestService.Controllers
         /// <param name="size"></param>
         /// <param name="sort"></param>
         /// <returns></returns>
-        // 
         [HttpGet]
         [Authorize]
         [ProducesResponseType(StatusCodes.Status401Unauthorized)]
@@ -45,30 +44,29 @@ namespace KanbanRestService.Controllers
             [FromQuery] int size = 10,            
             [FromQuery] List<string>? sort = null            
             )
-        {
+        {            
+            var scheme = Request?.Scheme ?? "http";
+
             var listOfTasks = await _taskService.GetPaginatedTasksAsync(cancellationToken, status, page, size, sort);
 
-            var tasksWithHateoasLinks = listOfTasks.Select(task => 
-                    _responseDtoFactory.CreateFoundTaskWithHateoas(task.Id, task, Url, Request.Scheme)).ToList();
+            var tasksWithHateoasLinks = _responseDtoFactory.CreateListFoundTasksWithHateoas(listOfTasks, Url, scheme);
 
-            var newPagedTasks = new PagedResultKanbanTasksResponse<KanbanTaskResponse>(tasksWithHateoasLinks, tasksWithHateoasLinks.Count(), page, size);
-
-            _responseDtoFactory.AddPagedHateoasLinksFor(newPagedTasks, status, page, size, sort, Url, Request.Scheme);
+            var newPagedTasks = _responseDtoFactory.CreatePagedResult_WithHateoasLinksFor(tasksWithHateoasLinks, status, page, size, sort, Url, scheme);
 
             return Ok(newPagedTasks);
-        }
-
-        
+        }        
 
         // GET: TasksController/api/tasks/id
         [HttpGet("{id}")]
-        public async Task<ActionResult> GetById(int id, CancellationToken cancellationToken)
+        public async Task<ActionResult<KanbanTaskResponse?>> GetById(int id, CancellationToken cancellationToken)
         {
+            var scheme = Request?.Scheme ?? "http";
+
             var foundTask = await _taskService.GetTaskByIdAsync(id, cancellationToken);
 
             TaskExistsOrThrowException(id, foundTask != null);
 
-            var foundTaskDto = _responseDtoFactory.CreateFoundTaskWithHateoas(id, foundTask, Url, Request.Scheme);
+            var foundTaskDto = _responseDtoFactory.CreateFoundTaskWithHateoas(id, foundTask, Url, scheme);
 
             return Ok(foundTaskDto);
         }
@@ -81,9 +79,11 @@ namespace KanbanRestService.Controllers
             if (!ModelState.IsValid)
                 return BadRequest(ModelState);
 
+            var scheme = Request?.Scheme ?? "http";
+
             var createdTask = await _taskService.CreateTaskAsync(createTaskDTO, cancellationToken);
 
-            var taskResponse = _responseDtoFactory.CreateFoundTaskWithHateoas(createdTask.Id, createdTask, Url, Request.Scheme);
+            var taskResponse = _responseDtoFactory.CreateFoundTaskWithHateoas(createdTask.Id, createdTask, Url, scheme);
 
             return CreatedAtAction(nameof(GetById), new { id = taskResponse.Id }, taskResponse);
         }
@@ -95,9 +95,9 @@ namespace KanbanRestService.Controllers
             if (!ModelState.IsValid)
                 return BadRequest(ModelState);
 
-            var isTaskCreated = await _taskService.UpdateTaskAsync(id, fullUpdateTaskDTO, cancellationToken);
+            var isTaskUpdated = await _taskService.UpdateTaskAsync(id, fullUpdateTaskDTO, cancellationToken);
 
-            TaskExistsOrThrowException(id, isTaskCreated);
+            TaskExistsOrThrowException(id, isTaskUpdated);
 
             return NoContent(); 
         }
@@ -109,9 +109,9 @@ namespace KanbanRestService.Controllers
             if (!ModelState.IsValid)
                 return BadRequest(ModelState);
 
-            var isTaskCreated = await _taskService.PartialUpdateTaskAsync(id, partialUpdateTaskDTO, cancellationToken);
+            var isTaskUpdated = await _taskService.PartialUpdateTaskAsync(id, partialUpdateTaskDTO, cancellationToken);
 
-            TaskExistsOrThrowException(id, isTaskCreated);
+            TaskExistsOrThrowException(id, isTaskUpdated);
 
             return NoContent();
         }

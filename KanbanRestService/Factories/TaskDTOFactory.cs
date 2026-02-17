@@ -22,6 +22,11 @@ namespace KanbanRestService.Factories
             IUrlHelper url, 
             string requestScheme)
         {
+            if (task == null)
+            {
+                throw new ArgumentNullException(nameof(task));
+            }
+
             var foundTasktDto = _mapper.Map<KanbanTaskResponse>(task);
 
             var getHrefString = url.Action("GetById", "Tasks", new { id }, requestScheme);
@@ -37,7 +42,19 @@ namespace KanbanRestService.Factories
             return foundTasktDto;
         }
 
-        public void AddPagedHateoasLinksFor(PagedResultKanbanTasksResponse<KanbanTaskResponse> newPagedTasks,
+        public List<KanbanTaskResponse> CreateListFoundTasksWithHateoas(
+            List<KanbanTask?> foundTasks,
+            IUrlHelper url,
+            string requestScheme)
+        {
+            if(foundTasks == null || !foundTasks.Any() || foundTasks.Any(task => task ==null))
+                throw new ArgumentNullException(nameof(foundTasks), "[CreateListFoundTasksWithHateoas] Found tasks list cannot be null.");
+
+            return foundTasks.Select(task => CreateFoundTaskWithHateoas(task.Id, task, url,  requestScheme)).ToList();
+        }
+
+        public PagedResultKanbanTasksResponse<KanbanTaskResponse> CreatePagedResult_WithHateoasLinksFor(
+            List<KanbanTaskResponse> tasksWithHateoasLinks,
             string? status,
             int page,
             int size,
@@ -46,6 +63,8 @@ namespace KanbanRestService.Factories
             string requestScheme
             )
         {
+            var newPagedTasks = new PagedResultKanbanTasksResponse<KanbanTaskResponse>(tasksWithHateoasLinks, tasksWithHateoasLinks.Count(), page, size);
+
             var selfUrl = url.Action("GetAll", "Tasks", new { status, page, size, sort }, requestScheme);
             var createUrl = url.Action("Create", "Tasks", null, requestScheme);
             var nextUrl = url.Action("GetAll", "Tasks", new { status, page = page + 1, size, sort }, requestScheme);
@@ -55,6 +74,8 @@ namespace KanbanRestService.Factories
             newPagedTasks.Links.Add(new LinkDTO("create", createUrl, "POST"));
             newPagedTasks.Links.Add(new LinkDTO("next", nextUrl, "GET"));
             newPagedTasks.Links.Add(new LinkDTO("prev", prevUrl, "GET"));
+
+            return newPagedTasks;
         }
     }
 }

@@ -35,7 +35,7 @@ namespace KanbanInfrastructure.RepositoryLayer.UnitOfWork
             if (!_repositories.ContainsKey(type))
             {
                 var repositoryType = typeof(GenericRepository<>);
-                var repositoryInstance = Activator.CreateInstance(repositoryType.MakeGenericType(typeof(T)), _dbContext);
+                var repositoryInstance = Activator.CreateInstance(repositoryType.MakeGenericType(typeof(T)), this);
                 _repositories.Add(type, repositoryInstance);
             }
             return (GenericRepository<T>)_repositories[type];

@@ -16,7 +16,6 @@
 
   <ItemGroup>
     <Folder Include="Integration\Controllers\" />
-    <Folder Include="Unit\NewFolder\" />
   </ItemGroup>
 
   <ItemGroup>

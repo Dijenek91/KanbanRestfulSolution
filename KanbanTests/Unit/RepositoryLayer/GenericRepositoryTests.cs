@@ -7,6 +7,7 @@ using Moq;
 using NUnit.Framework;
 using System;
 using System.Collections.Generic;
+using System.ComponentModel.DataAnnotations;
 using System.Text;
 
 namespace KanbanTests.Unit.RepositoryLayer
@@ -231,6 +232,78 @@ namespace KanbanTests.Unit.RepositoryLayer
 
             Assert.That(found, Is.Not.Null);
             Assert.That(found!.Id, Is.EqualTo(saved.Id));
+        }
+
+        //**************************************************************************************
+        // Validation-related tests: use a small test-only entity that contains DataAnnotations.
+        // Test-only entity with DataAnnotations to exercise validation paths
+        private class TestValidatedEntity
+        {
+            [Required]
+            public string Name { get; set; }
+        }
+
+        // Generic helper for tests that need a repository for a custom test entity type.
+        private static GenericRepository<T> CreateRepositoryWithContext<T>(KanbanAppDbContext ctx, out Mock<IUnitOfWork<KanbanAppDbContext>> uowMock)
+            where T : class
+        {
+            uowMock = new Mock<IUnitOfWork<KanbanAppDbContext>>(MockBehavior.Strict);
+            uowMock.SetupGet(u => u.Context).Returns(ctx);
+            return new GenericRepository<T>(uowMock.Object);
+        }
+
+
+        [Test]
+        public void Add_InvalidEntity_ThrowsValidationWrappedException_UsingTestEntity()
+        {
+            using var ctx = CreateInMemoryContext(Guid.NewGuid().ToString());
+            var repo = CreateRepositoryWithContext<TestValidatedEntity>(ctx, out _);
+
+            var invalid = new TestValidatedEntity { Name = null! }; // violates [Required]
+
+            // ValidateEntityAndThrowException wraps ValidationException in a general Exception with "Validation failed:"
+            Assert.That(() => repo.Add(invalid), Throws.Exception.With.Message.StartsWith("Validation failed:"));
+        }
+
+        [Test]
+        public void Update_InvalidEntity_ThrowsValidationWrappedException_UsingTestEntity()
+        {
+            using var ctx = CreateInMemoryContext(Guid.NewGuid().ToString());
+            var repo = CreateRepositoryWithContext<TestValidatedEntity>(ctx, out _);
+
+            var invalid = new TestValidatedEntity { Name = null! }; // violates [Required]
+
+            Assert.That(() => repo.Update(invalid), Throws.Exception.With.Message.StartsWith("Validation failed:"));
+        }
+
+        [Test]
+        public void BulkInsert_WithInvalidEntity_ThrowsValidationWrappedException_UsingTestEntity()
+        {
+            using var ctx = CreateInMemoryContext(Guid.NewGuid().ToString());
+            var repo = CreateRepositoryWithContext<TestValidatedEntity>(ctx, out _);
+
+            var list = new[] { new TestValidatedEntity { Name = "ok" }, new TestValidatedEntity { Name = null! } };
+
+            Assert.That(() => repo.BulkInsert(list), Throws.Exception.With.Message.StartsWith("Validation failed:"));
+        }
+
+        [Test]
+        public void BulkInsert_Restores_AutoDetectChangesEnabled()
+        {
+            using var ctx = CreateInMemoryContext(Guid.NewGuid().ToString());
+            var repo = CreateRepositoryWithContext(ctx, out var _);
+
+            // ensure default is true then call BulkInsert and assert restored
+            ctx.ChangeTracker.AutoDetectChangesEnabled = true;
+            var entities = new[] { new KanbanTask { Name = "x", Description = string.Empty }, new KanbanTask { Name = "y", Description = string.Empty } };
+
+            repo.BulkInsert(entities);
+
+            Assert.That(ctx.ChangeTracker.AutoDetectChangesEnabled, Is.True);
+            // the entities should be tracked as Added
+            var tracked = ctx.ChangeTracker.Entries().Where(e => e.Entity is KanbanTask).ToList();
+            Assert.That(tracked.Count, Is.EqualTo(2));
+            Assert.That(tracked.All(e => e.State == EntityState.Added), Is.True);
         }
     }
 }

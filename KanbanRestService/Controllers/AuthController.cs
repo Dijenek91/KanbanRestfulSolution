@@ -1,4 +1,5 @@
-﻿using Microsoft.AspNetCore.Mvc;
+﻿using KanbanRestService.Helpers;
+using Microsoft.AspNetCore.Mvc;
 using Microsoft.IdentityModel.Tokens;
 using System.IdentityModel.Tokens.Jwt;
 using System.Security.Claims;
@@ -13,10 +14,12 @@ namespace KanbanRestService.Controllers
     public class AuthController : ControllerBase
     {
         private readonly IConfiguration _config;
+        private readonly IHostEnvironment _environment;
 
-        public AuthController(IConfiguration config)
+        public AuthController(IConfiguration config, IHostEnvironment environment)
         {
             _config = config;
+            _environment = environment;
         }
 
         // POST api/<AuthController>
@@ -46,7 +49,8 @@ namespace KanbanRestService.Controllers
 
         private SecurityTokenDescriptor _createTokenDescriptor(string username)
         {
-            var secretKey = _config["SuperSecretJwtKey"];
+            var secretKey = JwtKeyProvider.GetKey(_config, _environment);
+            Console.WriteLine($"auth controller USED JWT key (Auth): {secretKey}");
             var issuer = _config["Issuer"];
             var audience = _config["Audience"];
 

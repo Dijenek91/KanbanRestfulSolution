@@ -47,10 +47,13 @@ namespace KanbanRestService.Factories
             IUrlHelper url,
             string requestScheme)
         {
-            if(foundTasks == null || !foundTasks.Any() || foundTasks.Any(task => task ==null))
+            if(foundTasks == null)
                 throw new ArgumentNullException(nameof(foundTasks), "[CreateListFoundTasksWithHateoas] Found tasks list cannot be null.");
 
-            return foundTasks.Select(task => CreateFoundTaskWithHateoas(task.Id, task, url,  requestScheme)).ToList();
+            return foundTasks.
+                Where(task => task!= null).
+                Select(task => CreateFoundTaskWithHateoas(task!.Id, task, url,  requestScheme))
+                .ToList();
         }
 
         public PagedResultKanbanTasksResponse<KanbanTaskResponse> CreatePagedResult_WithHateoasLinksFor(

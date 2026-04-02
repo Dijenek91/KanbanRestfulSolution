@@ -6,11 +6,13 @@ using KanbanModel.ModelClasses;
 using KanbanRestService.Factories;
 using KanbanRestService.GraphQL.Mutations;
 using KanbanRestService.GraphQL.Queries;
+using KanbanRestService.Helpers;
 using KanbanRestService.Hubs;
 using KanbanRestService.Middlware;
 using KanbanRestService.Services;
 using Microsoft.AspNetCore.Authentication.JwtBearer;
 using Microsoft.EntityFrameworkCore;
+using Microsoft.EntityFrameworkCore.Metadata.Internal;
 using Microsoft.IdentityModel.Tokens;
 using Scalar.AspNetCore;
 using System.Text;
@@ -110,8 +112,12 @@ namespace KanbanRestService
 
                 Console.WriteLine($"Enviroment: {hostEnvrionment.EnvironmentName}");
                 Console.WriteLine($"Db connection string: {connectionString}");
-
-                if (hostEnvrionment.EnvironmentName == "Docker")
+                
+                if (hostEnvrionment.EnvironmentName == "IntegrationTest")
+                {
+                    options.UseSqlite("DataSource=:memory:");
+                }
+                else if (hostEnvrionment.EnvironmentName == "Docker")
                 {
                     options.UseNpgsql(
                         connectionString,
@@ -155,20 +161,12 @@ namespace KanbanRestService
             {
                 return;
             }
-
         }
 
         private static byte[] GetSecurityJwtKey(WebApplicationBuilder builder)
         {
-            var jwtKey = builder.Configuration["SuperSecretJwtKey"];
-
-            if (string.IsNullOrWhiteSpace(jwtKey))
-            {
-                throw new InvalidOperationException(
-                    "SuperSecretJwtKey is missing. Set it via user secrets"
-                );
-            }
-
+            var jwtKey = JwtKeyProvider.GetKey(builder.Configuration, builder.Environment);
+           Console.WriteLine($"program.cs USED JWT key (Auth): {jwtKey}");
             return Encoding.UTF8.GetBytes(jwtKey);
         }
 

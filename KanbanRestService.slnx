@@ -1,5 +1,6 @@
 <Solution>
   <Project Path="KanbanInfrastructure/KanbanInfrastructure.csproj" />
+  <Project Path="KanbanIntegrationTests/KanbanIntegrationTests.csproj" Id="8a69d386-5bd9-496b-a0c3-44b69dc1f627" />
   <Project Path="KanbanModel/KanbanModel.csproj" />
   <Project Path="KanbanRestService/KanbanRestService.csproj" />
   <Project Path="KanbanTests/KanbanTests.csproj" Id="9a45d82b-79b2-476c-92ff-197dd219540e" />

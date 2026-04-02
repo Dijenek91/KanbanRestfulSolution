@@ -9,10 +9,10 @@
         public int Page { get; }
         public int Size { get; }
 
-        public PagedResultKanbanTasksResponse(List<TEntity> items, int total, int page, int size)
+        public PagedResultKanbanTasksResponse(List<TEntity> items, int totalCount, int page, int size)
         {
             Items = items;
-            TotalCount = total;
+            TotalCount = totalCount;
             Page = page;
             Size = size;
         }

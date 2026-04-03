@@ -1,7 +1,9 @@
 ﻿using KanbanRestService.Controllers;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.Extensions.Configuration;
+using Microsoft.Extensions.Hosting;
 using Microsoft.IdentityModel.Tokens;
+using Moq;
 using NUnit.Framework;
 using NUnit.Framework.Legacy;
 using System.IdentityModel.Tokens.Jwt;
@@ -15,11 +17,12 @@ namespace KanbanTests.Unit.Controllers
     {
         private const string ValidUsername = "admin";
         private const string ValidPassword = "admin";
-        private const string SecretKey = "a-very-strong-super-secret-key-for-tests-should-be-long";
+        private const string SecretKey = "TEST_KEY_1234567890123456789012345";
         private const string Issuer = "unit-tests";
         private const string Audience = "unit-tests-audience";
 
         private IConfiguration _configuration = null!;
+        private IHostEnvironment _environment = null!; // not used in controller but required by constructor
 
         [SetUp]
         public void SetUp()
@@ -34,9 +37,13 @@ namespace KanbanTests.Unit.Controllers
             _configuration = new ConfigurationBuilder()
                 .AddInMemoryCollection(inMemorySettings!)
                 .Build();
+
+            var mockEnv = new Mock<IHostEnvironment>();
+            mockEnv.SetupGet(e => e.EnvironmentName).Returns("UnitTest");
+            _environment = mockEnv.Object;
         }
 
-        private AuthController CreateController() => new AuthController(_configuration);
+        private AuthController CreateController() => new AuthController(_configuration, _environment);
 
         [Test]
         public void Login_Returns_Unauthorized_When_Credentials_Are_Invalid()

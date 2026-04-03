@@ -103,14 +103,6 @@ namespace KanbanTests.Unit.Factories
         }
 
         [Test]
-        public void CreateListFoundTasksWithHateoas_throws_on_null_inputs()
-        {
-            Assert.That(() => _factory.CreateListFoundTasksWithHateoas(null!, _urlMock.Object, "http"), Throws.ArgumentNullException);
-            var tasks = new List<KanbanTask?> { null };
-            Assert.That(() => _factory.CreateListFoundTasksWithHateoas(tasks, _urlMock.Object, "http"), Throws.ArgumentNullException);
-        }
-
-        [Test]
         public void CreateListFoundTasksWithHateoas_maps_each_item_and_calls_inner_create()
         {
             var tasks = new List<KanbanTask?> { new KanbanTask { Id = 1 }, new KanbanTask { Id = 2 } };

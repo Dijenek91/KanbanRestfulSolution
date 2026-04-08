@@ -140,25 +140,9 @@ namespace KanbanIntegrationTests
         [Test]
         public async Task GetById_ReturnsNoTask()
         {
-            List<KanbanTask> kanbanTasks = new List<KanbanTask>()
-            {
-                new KanbanTask
-                {
-                    Name = "Task1",
-                    Description = "Description1",
-                    Status = StatusEnum.ToDo
-                },
-                new KanbanTask
-                {
-                    Name = "Task2",
-                    Description = "Description2",
-                    Status = StatusEnum.ToDo
-                }
-            };
+            await SeedEmptyAsync();
 
-            await SeedAsync(kanbanTasks);
-
-            var response = await _client.GetAsync("/api/tasks/5");
+            var response = await _client.GetAsync("/api/tasks/253");
 
             Assert.That(response.StatusCode, Is.EqualTo(HttpStatusCode.NotFound));
             var taskReponse = response.Content.ReadFromJsonAsync<PagedResultKanbanTasksResponse<KanbanTaskResponse>>().Result;
@@ -208,6 +192,201 @@ namespace KanbanIntegrationTests
             Assert.That(response.StatusCode, Is.EqualTo(HttpStatusCode.BadRequest));
         }
 
+        #endregion
+
+        #region FullUpdate
+
+        [Test]
+        public async Task UpdateFullTask_ReturnsNoContent()
+        {
+            List<KanbanTask> kanbanTasks = new List<KanbanTask>()
+            {
+                new KanbanTask
+                {   
+                    Name = "Task1",
+                    Description = "Description1",
+                    Status = StatusEnum.ToDo
+                },
+                new KanbanTask
+                {   
+                    Name = "Task2",
+                    Description = "Description2",
+                    Status = StatusEnum.ToDo
+                }
+            };
+
+            await SeedAsync(kanbanTasks);
+
+            var getResponse = await _client.GetAsync("/api/tasks");
+
+            Assert.That(getResponse.StatusCode, Is.EqualTo(HttpStatusCode.OK));
+            var responseResult = getResponse.Content.ReadFromJsonAsync<PagedResultKanbanTasksResponse<KanbanTaskResponse>>().Result;
+            List<int> taskIds = responseResult.Items.Select(task => task.Id).ToList();
+
+            var request = new FullUpdateKanbanTaskRequest()
+            {
+                Name = "Task1",
+                Description = "changed descr",
+                PriorityEnum = PriorityEnum.Medium,
+                Size = 3,
+                Status = StatusEnum.ToDo
+            };
+
+            var response = await _client.PutAsJsonAsync($"/api/tasks/{taskIds[0]}", request);
+
+            Assert.That(response.StatusCode, Is.EqualTo(HttpStatusCode.NoContent));
+        }
+
+        [Test]
+        public async Task UpdateFullTask_BadRequest()
+        {
+            List<KanbanTask> kanbanTasks = new List<KanbanTask>()
+            {
+                new KanbanTask
+                {
+                    Name = "Task1",
+                    Description = "Description1",
+                    Status = StatusEnum.ToDo
+                },
+                new KanbanTask
+                {   
+                    Name = "Task2",
+                    Description = "Description2",
+                    Status = StatusEnum.ToDo
+                }
+            };
+
+            await SeedAsync(kanbanTasks);
+
+            var badRequest = new FullUpdateKanbanTaskRequest()
+            {
+                Name = "Task1",
+                Description = "changed descr",
+                PriorityEnum = PriorityEnum.Medium,
+                Size = 0, // invalid model -> throws restriction
+                Status = StatusEnum.ToDo
+            };
+
+            var response = await _client.PutAsJsonAsync("/api/tasks/1", badRequest);
+
+            Assert.That(response.StatusCode, Is.EqualTo(HttpStatusCode.BadRequest));
+        }
+        #endregion
+
+        #region Partial Update
+
+        [Test]
+        public async Task UpdatePartialTask_ReturnsNoContent()
+        {
+            List<KanbanTask> kanbanTasks = new List<KanbanTask>()
+            {
+                new KanbanTask
+                {
+                    Name = "Task1",
+                    Description = "Description1",
+                    Status = StatusEnum.ToDo
+                },
+                new KanbanTask
+                {
+                    Name = "Task2",
+                    Description = "Description2",
+                    Status = StatusEnum.ToDo
+                }
+            };
+
+            await SeedAsync(kanbanTasks);
+
+            var getResponse = await _client.GetAsync("/api/tasks");
+
+            Assert.That(getResponse.StatusCode, Is.EqualTo(HttpStatusCode.OK));
+            var responseResult = getResponse.Content.ReadFromJsonAsync<PagedResultKanbanTasksResponse<KanbanTaskResponse>>().Result;
+            List<int> taskIds = responseResult.Items.Select(task => task.Id).ToList();
+
+            var request = new PartialUpdateKanbanTaskRequest()
+            {
+                Description = "changed descr"
+            };
+
+            var response = await _client.PatchAsJsonAsync($"/api/tasks/{taskIds[0]}", request);
+
+            Assert.That(response.StatusCode, Is.EqualTo(HttpStatusCode.NoContent));
+        }
+
+        [Test]
+        public async Task UpdatePartialTask_BadRequest()
+        {
+            List<KanbanTask> kanbanTasks = new List<KanbanTask>()
+            {
+                new KanbanTask
+                {
+                    Name = "Task1",
+                    Description = "Description1",
+                    Status = StatusEnum.ToDo
+                },
+                new KanbanTask
+                {
+                    Name = "Task2",
+                    Description = "Description2",
+                    Status = StatusEnum.ToDo
+                }
+            };
+
+            await SeedAsync(kanbanTasks);
+
+            var badRequest = new PartialUpdateKanbanTaskRequest()
+            {
+                Size = 0
+            };
+
+            var response = await _client.PatchAsJsonAsync("/api/tasks/1", badRequest);
+
+            Assert.That(response.StatusCode, Is.EqualTo(HttpStatusCode.BadRequest));
+        }
+        #endregion
+
+        #region Delete
+
+        [Test]
+        public async Task DeleteTask_ReturnsNoContent()
+        {
+            List<KanbanTask> kanbanTasks = new List<KanbanTask>()
+            {
+                new KanbanTask
+                {
+                    Name = "Task1",
+                    Description = "Description1",
+                    Status = StatusEnum.ToDo
+                },
+                new KanbanTask
+                {
+                    Name = "Task2",
+                    Description = "Description2",
+                    Status = StatusEnum.ToDo
+                }
+            };
+
+            await SeedAsync(kanbanTasks);
+
+            var getResponse = await _client.GetAsync("/api/tasks");
+
+            Assert.That(getResponse.StatusCode, Is.EqualTo(HttpStatusCode.OK));
+            var responseResult = getResponse.Content.ReadFromJsonAsync<PagedResultKanbanTasksResponse<KanbanTaskResponse>>().Result;
+            List<int> taskIds = responseResult.Items.Select(task => task.Id).ToList();
+
+            var response = await _client.DeleteAsync($"/api/tasks/{taskIds[0]}");
+
+            Assert.That(response.StatusCode, Is.EqualTo(HttpStatusCode.NoContent));
+        }
+
+        [Test]
+        public async Task DeleteTask_NotFound_ThrowsException()
+        {
+            await SeedEmptyAsync();
+
+            var response = await _client.DeleteAsync("/api/tasks/1");
+
+            Assert.That(response.StatusCode, Is.EqualTo(HttpStatusCode.NotFound));
+        }
         #endregion
     }
 }

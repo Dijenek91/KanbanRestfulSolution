@@ -75,8 +75,11 @@ namespace KanbanRestService.Factories
 
             newPagedTasks.Links.Add(new LinkDTO("self", selfUrl, "GET"));
             newPagedTasks.Links.Add(new LinkDTO("create", createUrl, "POST"));
-            newPagedTasks.Links.Add(new LinkDTO("next", nextUrl, "GET"));
-            newPagedTasks.Links.Add(new LinkDTO("prev", prevUrl, "GET"));
+            if (newPagedTasks.TotalCount != 0)  //there is no need to send prev and next page links if there are no tasks available in db
+            {
+                newPagedTasks.Links.Add(new LinkDTO("next", nextUrl, "GET"));
+                newPagedTasks.Links.Add(new LinkDTO("prev", prevUrl, "GET"));
+            }
 
             return newPagedTasks;
         }

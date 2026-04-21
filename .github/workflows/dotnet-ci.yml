@@ -26,11 +26,12 @@ jobs:
       run: dotnet build --no-restore --configuration Release
 
     - name: Run tests with report and coverage
-      run: dotnet test --no-build --configuration Release \
-        --logger "trx;LogFileName=test-results.trx" \
-         /p:CollectCoverage=true \
-         /p:CoverletOutputFormat=cobertura \
-         /p:CoverletOutput=./TestResults/coverage/
+      run: |
+        dotnet test --no-build --configuration Release \
+          --logger "trx;LogFileName=test-results.trx" \
+          /p:CollectCoverage=true \
+          /p:CoverletOutputFormat=cobertura \
+          /p:CoverletOutput=./TestResults/coverage/
       env:
         SuperSecretJwtKey: supersecretkey12345678901234567890
         Issuer: MyKanbanTaskApp

@@ -13,6 +13,7 @@ It shall include:
 	- Bonus challange i did for myself:
 		- DOCKER envrionment: Use postgreSQL as a seperate container and db provider
 		- DEVELOPMENT envrionment: use microsoft SQL server
+		- INTEGRATION tests: use SQLite in-memory
   - Authentication with JWT
 
 Performance requirement:
@@ -35,6 +36,14 @@ Authenticaton\Authorization:
   - Username\password verification for requesteing the token is a dummy implementation and not a realworld implementation
   - SCALAR UI doesnt support JWT testing, so verification of this functionality needs to be done through Postman project
 
+CI\CD:
+  - dotnet-ci.yml added in workflows
+  - On each push\pull request the CI:
+	- checkouts code
+	- builds
+	- runs the unit and integration tests
+	- adds the reporting and uploads it as artifact in github\Actions
+
 Testing and verification envrioment:
   - Postman project: https://web.postman.co/workspace/My-Workspace~3be1e0e9-c3e8-4732-800c-bb6ad975a485/collection/6602988-e533ff4c-6fa5-47d1-a054-6f2004b6fc6d?action=share&source=copy-link&creator=6602988
   - Make sure to set the enviroment to: https://web.postman.co/workspace/My-Workspace~3be1e0e9-c3e8-4732-800c-bb6ad975a485/environment/6602988-ca9ebc0d-1512-40a8-8145-8495ebf0b111?action=share&source=copy-link&creator=6602988
@@ -54,5 +63,5 @@ Running the docker-compose.yaml for running the API and the PostgresSQL server a
 	- run cmd: ```docker compose build```
 	- run cmd: ```docker compose up```
 	
-Personal Task Tracking:
+Personal Task Tracking (obsolete):
   - https://mykanbanproject.atlassian.net/jira/software/projects/DEV/boards/2?atlOrigin=eyJpIjoiZjEzOTU5MGZlOWFhNDJkYmE5Y2I5MmYzZjA2ODU0OTMiLCJwIjoiaiJ9

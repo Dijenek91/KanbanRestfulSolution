@@ -25,15 +25,45 @@ jobs:
     - name: Build
       run: dotnet build --no-restore --configuration Release
 
-    - name: Run tests with report
-      run: dotnet test --no-build --configuration Release --logger "trx;LogFileName=test-results.trx"
+    - name: Run tests with report and coverage
+      run: dotnet test --no-build --configuration Release \
+        --logger "trx;LogFileName=test-results.trx" \
+         /p:CollectCoverage=true \
+         /p:CoverletOutputFormat=cobertura \
+         /p:CoverletOutput=./TestResults/coverage/
+      env:
+        SuperSecretJwtKey: supersecretkey12345678901234567890
+        Issuer: MyKanbanTaskApp
+        Audience: MyKanbanTaskApp
 
     - name: Upload test results
       uses: actions/upload-artifact@v4
       with:
         name: test-results
         path: '**/*.trx'
-      env:
-        SuperSecretJwtKey: supersecretkey12345678901234567890
-        Issuer: MyKanbanTaskApp
-        Audience: MyKanbanTaskApp
+
+    - name: Upload raw coverage
+      uses: actions/upload-artifact@v4
+      with:
+        name: coverage-raw
+        path: '**/coverage.cobertura.xml'
+
+    - name: Install ReportGenerator
+      run: dotnet tool install -g dotnet-reportgenerator-globaltool
+
+    - name: Generate coverage report
+      run: reportgenerator \
+        -reports:"**/coverage.cobertura.xml" \
+        -targetdir:"coverage-report" \
+        -reporttypes:Html
+
+    - name: Upload coverage report
+      uses: actions/upload-artifact@v4
+      with:
+        name: coverage-report
+        path: coverage-report
+    
+    - name: Upload coverage to Codecov
+      uses: codecov/codecov-action@v4
+      with:
+        files: '**/coverage.cobertura.xml'

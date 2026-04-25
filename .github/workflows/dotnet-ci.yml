@@ -28,10 +28,8 @@ jobs:
     - name: Run tests with report and coverage
       run: |
         dotnet test --no-build --configuration Release \
-          --logger "trx;LogFileName=test-results.trx" \
-          /p:CollectCoverage=true \
-          /p:CoverletOutputFormat=cobertura \
-          /p:CoverletOutput=./TestResults/coverage/
+        --collect:"XPlat Code Coverage" \
+        --logger "trx;LogFileName=test-results.trx"            
       env:
         SuperSecretJwtKey: supersecretkey12345678901234567890
         Issuer: MyKanbanTaskApp
@@ -45,8 +43,10 @@ jobs:
 
     - name: Debug coverage output
       run: |
-          echo "Listing all files..."
-          find . -type f | grep cobertura || true
+          echo "==== TestResults structure ===="
+          find . -type d -name "TestResults"
+          echo "==== cobertura files ===="
+          find . -name "*.cobertura.xml" || true
 
     - name: Upload raw coverage
       uses: actions/upload-artifact@v4
@@ -65,8 +65,10 @@ jobs:
 
     - name: Debug coverage output 2
       run: |
-          echo "Listing all files..."
-          find . -type f | grep cobertura
+          echo "==== TestResults structure ===="
+          find . -type d -name "TestResults"
+          echo "==== cobertura files ===="
+          find . -name "*.cobertura.xml" || true
 
     - name: Upload coverage report
       uses: actions/upload-artifact@v4

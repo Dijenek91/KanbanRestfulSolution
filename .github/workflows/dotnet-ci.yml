@@ -43,6 +43,11 @@ jobs:
         name: test-results
         path: '**/*.trx'
 
+    - name: Debug coverage output
+      run: |
+          echo "Listing all files..."
+          find . -type f | grep cobertura
+
     - name: Upload raw coverage
       uses: actions/upload-artifact@v4
       with:
@@ -57,6 +62,11 @@ jobs:
         -reports:"TestResults/coverage/coverage.cobertura.xml"
         -targetdir:"coverage-report" \
         -reporttypes:Html
+
+    - name: Debug coverage output 2
+      run: |
+          echo "Listing all files..."
+          find . -type f | grep cobertura
 
     - name: Upload coverage report
       uses: actions/upload-artifact@v4

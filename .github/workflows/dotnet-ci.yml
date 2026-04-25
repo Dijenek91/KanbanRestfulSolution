@@ -46,7 +46,7 @@ jobs:
     - name: Debug coverage output
       run: |
           echo "Listing all files..."
-          find . -type f | grep cobertura
+          find . -type f | grep cobertura || true
 
     - name: Upload raw coverage
       uses: actions/upload-artifact@v4

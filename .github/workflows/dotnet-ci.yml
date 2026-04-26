@@ -60,10 +60,12 @@ jobs:
 
     - name: Generate coverage report
       run: reportgenerator \
-        -reports:"**/coverage.cobertura.xml"
+        -reports:"**/coverage.cobertura.xml" \
         -targetdir:"coverage-report" \
         -reporttypes:Html
-        -assemblyfilters:"+Kanban*;-Microsoft*;-System*"
+        -assemblyfilters:"+Kanban*;-Microsoft*;-System*" \
+        -classfilters:"-*.Generated*;-System.*;-Microsoft.*" \
+        -filefilters:"-*.g.cs;-*.designer.cs"
 
     - name: Upload coverage report
       uses: actions/upload-artifact@v4

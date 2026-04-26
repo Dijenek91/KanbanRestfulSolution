@@ -1,8 +1,8 @@
 # KanbanRestfulSolution
 Java Interview question reimagined as a NET10 framework service
 
-![CI](https://github.com/your-username/your-repo/actions/workflows/dotnet-ci.yml/badge.svg)
-![Coverage](https://codecov.io/gh/your-username/your-repo/branch/main/graph/badge.svg)
+![CI](https://github.com/Dijenek91/KanbanRestfulSolution/actions/workflows/dotnet-ci.yml/badge.svg)
+![Coverage](https://codecov.io/gh/Dijenek91/KanbanRestfulSolution/branch/main/graph/badge.svg)
 
 The implementation shall provide a rest API for a Kanban board front end UI.
 It shall include:

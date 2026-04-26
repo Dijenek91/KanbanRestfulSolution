@@ -1,0 +1,36 @@
+<?xml version="1.0" encoding="utf-8" ?>
+<RunSettings>
+  <DataCollectionRunSettings>
+    <DataCollectors>
+      <DataCollector friendlyName="XPlat Code Coverage">
+        <Configuration>
+
+          <!-- Exclude by namespace/module -->
+          <Exclude>
+            [Microsoft.*]*
+            [System.*]*
+            [*.Generated]*
+			[MigrationPostgresSql]* 
+			[MigrationSqlServer]* 
+          </Exclude>
+
+          <!-- Exclude by file -->
+          <ExcludeByFile>
+            **/Migrations/*.cs
+            **/*Designer.cs
+            **/*Generated*.cs
+			**/*ModelSnapshot.cs
+          </ExcludeByFile>
+
+          <!-- Optional: exclude attributes -->
+          <ExcludeByAttribute>
+            Obsolete
+            GeneratedCodeAttribute
+            CompilerGeneratedAttribute
+          </ExcludeByAttribute>
+
+        </Configuration>
+      </DataCollector>
+    </DataCollectors>
+  </DataCollectionRunSettings>
+</RunSettings>

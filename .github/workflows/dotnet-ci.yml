@@ -24,13 +24,20 @@ jobs:
 
     - name: Build
       run: dotnet build --no-restore --configuration Release
+    
+    - name: Run unit tests with coverage
+      run: |
+        dotnet test KanbanTests \
+        --configuration Release \
+        --collect:"XPlat Code Coverage" \
+        --logger "trx;LogFileName=unit-tests.trx"
 
     - name: Run tests with report and coverage
       run: |
-        dotnet test --no-build --configuration Release \
-        --settings coverlet.runsettings \
+        dotnet test KanbanIntegrationTests \
+        --configuration Release \
         --collect:"XPlat Code Coverage" \
-        --logger "trx;LogFileName=test-results.trx"            
+        --logger "trx;LogFileName=integration-tests.trx"            
       env:
         SuperSecretJwtKey: supersecretkey12345678901234567890
         Issuer: MyKanbanTaskApp
@@ -44,10 +51,17 @@ jobs:
 
     - name: Debug coverage output
       run: |
-          echo "==== TestResults structure ===="
-          find . -type d -name "TestResults"
-          echo "==== cobertura files ===="
-          find . -name "*.cobertura.xml" || true
+        echo "==== TestResults structure ===="
+        find . -type d -name "TestResults"
+
+        echo "==== ALL cobertura files ===="
+        find . -name "coverage.cobertura.xml" || true
+
+        echo "==== unit test coverage ===="
+        find ./KanbanTests -name "coverage.cobertura.xml" || true
+
+        echo "==== integration test coverage ===="
+        find ./KanbanIntegrationTests -name "coverage.cobertura.xml" || true
 
     - name: Upload raw coverage
       uses: actions/upload-artifact@v4

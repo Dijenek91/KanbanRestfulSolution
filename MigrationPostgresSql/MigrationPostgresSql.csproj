@@ -4,6 +4,7 @@
     <TargetFramework>net10.0</TargetFramework>
     <ImplicitUsings>enable</ImplicitUsings>
     <Nullable>enable</Nullable>
+	<IsTestProject>false</IsTestProject>
   </PropertyGroup>
 
   <ItemGroup>
@@ -13,9 +14,10 @@
     </PackageReference>
     <PackageReference Include="Npgsql.EntityFrameworkCore.PostgreSQL" Version="10.0.1" />
   </ItemGroup>
-
+  
   <ItemGroup>
     <ProjectReference Include="..\KanbanInfrastructure\KanbanInfrastructure.csproj" />
   </ItemGroup>
 
+    
 </Project>

@@ -21,7 +21,7 @@ public class WebAppFactoryCustom : WebApplicationFactory<Program>
         {
             var testConfig = new Dictionary<string, string?>
             {
-                ["SuperSecretJwtKey"] = "supersecretkey12345678901234567890",
+                ["TestingJwtKey"] = "TEST_KEY_1234567890123456789012345",
                 ["Issuer"] = "MyKanbanTaskApp",
                 ["Audience"] = "MyKanbanTaskApp"
             };

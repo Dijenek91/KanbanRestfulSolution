@@ -12,7 +12,6 @@ using KanbanRestService.Middlware;
 using KanbanRestService.Services;
 using Microsoft.AspNetCore.Authentication.JwtBearer;
 using Microsoft.EntityFrameworkCore;
-using Microsoft.EntityFrameworkCore.Metadata.Internal;
 using Microsoft.IdentityModel.Tokens;
 using Scalar.AspNetCore;
 using System.Text;
@@ -136,7 +135,6 @@ namespace KanbanRestService
         {
             if(!IsEfDesignTime())
             { 
-                byte[] keyBytes = GetSecurityJwtKey(builder);
                 builder.Services.AddAuthentication(
                     options =>
                     {
@@ -153,7 +151,17 @@ namespace KanbanRestService
                             ValidateIssuerSigningKey = true,
                             ValidIssuer = builder.Configuration["Issuer"],
                             ValidAudience = builder.Configuration["Audience"],
-                            IssuerSigningKey = new SymmetricSecurityKey(keyBytes)
+
+                            //JWT key is resolved at request time, NOT during app startup
+                            //Now test config from WebAppFactory for Integration test is fully available
+                            IssuerSigningKeyResolver = (token, securityToken, kid, parameters) =>
+                            {
+                                var config = builder.Configuration;
+                                var env = builder.Environment;
+
+                                var key = JwtKeyProvider.GetKey(config, env);
+                                return new[] { new SymmetricSecurityKey(Encoding.UTF8.GetBytes(key)) };
+                            }
                         };
                     });
             }

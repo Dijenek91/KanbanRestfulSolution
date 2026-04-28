@@ -14,7 +14,7 @@ namespace KanbanIntegrationTests.CustomTestSupportItems
         public static string GenerateToken()
         {
             var key = new SymmetricSecurityKey(
-                Encoding.UTF8.GetBytes("supersecretkey12345678901234567890"));
+                Encoding.UTF8.GetBytes("TEST_KEY_1234567890123456789012345"));
 
             var creds = new SigningCredentials(key, SecurityAlgorithms.HmacSha256);
 

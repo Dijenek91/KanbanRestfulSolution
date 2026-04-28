@@ -1,4 +1,6 @@
-﻿namespace KanbanRestService.Helpers
+﻿using Microsoft.EntityFrameworkCore.Metadata.Internal;
+
+namespace KanbanRestService.Helpers
 {
     public static class JwtKeyProvider
     {
@@ -6,17 +8,24 @@
         {
             if (environment.IsEnvironment("IntegrationTest") || environment.IsEnvironment("UnitTest"))
             {
-                return "TEST_KEY_1234567890123456789012345";
+                var testingKey = config["TestingJwtKey"];
+                _throwExceptionIfStringIsNull(testingKey, environment.EnvironmentName);
+                return testingKey;
             }
 
-            var key = config["SuperSecretJwtKey"];          
+            var key = config["SuperSecretJwtKey"];
 
+            _throwExceptionIfStringIsNull(key, environment.EnvironmentName);
+
+            return key;
+        }
+
+        private static void _throwExceptionIfStringIsNull(string? key, string environmentName)
+        {
             if (string.IsNullOrWhiteSpace(key))
             {
-                throw new InvalidOperationException("SuperSecretJwtKey is missing.");
+                throw new InvalidOperationException($"JwtKeyProvider: key is missing in config for environment '{environmentName}'.");
             }
-            
-            return key;
         }
     }
 }

@@ -29,7 +29,7 @@ namespace KanbanTests.Unit.Controllers
         {
             var inMemorySettings = new Dictionary<string, string?>
             {
-                { "SuperSecretJwtKey", SecretKey },
+                { "TestingJwtKey", SecretKey },
                 { "Issuer", Issuer },
                 { "Audience", Audience }
             };

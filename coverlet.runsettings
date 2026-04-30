@@ -12,6 +12,7 @@
             [*.Generated]*
 			[MigrationPostgresSql]* 
 			[MigrationSqlServer]* 
+			[*]KanbanInfrastructure.DAL.DesignTimeDbContextFactory
           </Exclude>
 
           <!-- Exclude by file -->
@@ -21,7 +22,7 @@
             **/*Generated*.cs
 			**/*ModelSnapshot.cs
           </ExcludeByFile>
-
+		  
           <!-- Optional: exclude attributes -->
           <ExcludeByAttribute>
             Obsolete

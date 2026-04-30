@@ -3,3 +3,5 @@ ignore:
   - "**/*ModelSnapshot.cs"
   - "**/*.g.cs"
   - "**/Generated/**"
+  - "**/*.designer.cs"
+  - "**/*DesigneTimeDbContextFactory.cs"

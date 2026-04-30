@@ -56,6 +56,7 @@ namespace KanbanTests.Unit.Controllers
         {
             Assert.Throws<ArgumentNullException>(() => new TasksController(null!, _taskResponseFactoryMock.Object));
         }
+        [Test]
         public void Constructor_NullTaskFactory_ThrowsArgumentNullException()
         {
             Assert.Throws<ArgumentNullException>(() => new TasksController(_taskServiceMock.Object, null!));

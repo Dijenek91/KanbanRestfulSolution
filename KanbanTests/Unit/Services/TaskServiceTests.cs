@@ -184,6 +184,32 @@ namespace KanbanTests.Unit.Services
         }
 
         [Test]
+        public void GetPaginatedTasks_SortByPriorityDesc_NoPagination()
+        {
+            //arrange
+            var taskList = new List<KanbanTask>
+                {
+                    new KanbanTask { Id = 2, Name = "Task 2", Status = StatusEnum.ToDo, PriorityEnum = PriorityEnum.Medium},
+                    new KanbanTask { Id = 1, Name = "Task 1", Status = StatusEnum.InProgress, PriorityEnum = PriorityEnum.Low},
+                    new KanbanTask { Id = 3, Name = "Task 3", Status = StatusEnum.Completed, PriorityEnum = PriorityEnum.High }
+                };
+
+            _repoMock.Setup(x => x.GetQueryableEntities())
+                .Returns(taskList.AsQueryable());
+            _repoMock.Setup(x => x.GetEntitiesBasedOn(It.IsAny<IQueryable<KanbanTask>>(), It.IsAny<CancellationToken>()))
+                .ReturnsAsync((IQueryable<KanbanTask> q, CancellationToken _) => q.ToList());
+
+            var sortString = new List<string> { "priority,desc" };
+
+            //act
+            var result = _taskService.GetPaginatedTasksAsync(CancellationToken.None, null, 0, 0, sortString).Result;
+
+            //assert
+            var expectedOrder = new List<PriorityEnum> { PriorityEnum.High, PriorityEnum.Medium, PriorityEnum.Low };
+            Assert.That(result.Select(t => t.PriorityEnum), Is.EqualTo(expectedOrder));
+        }
+
+        [Test]
         public void GetPaginatedTasks_SortByStatusAsc_NoPagination()
         {
             //arrange
@@ -210,6 +236,32 @@ namespace KanbanTests.Unit.Services
         }
 
         [Test]
+        public void GetPaginatedTasks_SortByStatusDesc_NoPagination()
+        {
+            //arrange
+            var taskList = new List<KanbanTask>
+                {
+                    new KanbanTask { Id = 2, Name = "Task 2", Status = StatusEnum.InProgress},
+                    new KanbanTask { Id = 1, Name = "Task 1", Status = StatusEnum.ToDo},
+                    new KanbanTask { Id = 3, Name = "Task 3", Status = StatusEnum.Completed }
+                };
+
+            _repoMock.Setup(x => x.GetQueryableEntities())
+                .Returns(taskList.AsQueryable());
+            _repoMock.Setup(x => x.GetEntitiesBasedOn(It.IsAny<IQueryable<KanbanTask>>(), It.IsAny<CancellationToken>()))
+                .ReturnsAsync((IQueryable<KanbanTask> q, CancellationToken _) => q.ToList());
+
+            var sortString = new List<string> { "status,desc" };
+
+            //act
+            var result = _taskService.GetPaginatedTasksAsync(CancellationToken.None, null, 0, 0, sortString).Result;
+
+            //assert
+            var expectedOrder = new List<StatusEnum> { StatusEnum.Completed, StatusEnum.InProgress, StatusEnum.ToDo };
+            Assert.That(result.Select(t => t.Status), Is.EqualTo(expectedOrder));
+        }
+
+        [Test]
         public void GetPaginatedTasks_SortBySizeAsc_NoPagination()
         {
             //arrange
@@ -232,6 +284,32 @@ namespace KanbanTests.Unit.Services
 
             //assert
             var expectedOrder = new List<int> { 1, 2, 3 };
+            Assert.That(result.Select(t => t.Size), Is.EqualTo(expectedOrder));
+        }
+
+        [Test]
+        public void GetPaginatedTasks_SortBySizeDesc_NoPagination()
+        {
+            //arrange
+            var taskList = new List<KanbanTask>
+                {
+                    new KanbanTask { Id = 2, Name = "Task 2", Size = 2},
+                    new KanbanTask { Id = 1, Name = "Task 1", Size = 1},
+                    new KanbanTask { Id = 3, Name = "Task 3", Size = 3}
+                };
+
+            _repoMock.Setup(x => x.GetQueryableEntities())
+                .Returns(taskList.AsQueryable());
+            _repoMock.Setup(x => x.GetEntitiesBasedOn(It.IsAny<IQueryable<KanbanTask>>(), It.IsAny<CancellationToken>()))
+                .ReturnsAsync((IQueryable<KanbanTask> q, CancellationToken _) => q.ToList());
+
+            var sortString = new List<string> { "size,desc" };
+
+            //act
+            var result = _taskService.GetPaginatedTasksAsync(CancellationToken.None, null, 0, 0, sortString).Result;
+
+            //assert
+            var expectedOrder = new List<int> { 3, 2, 1 };
             Assert.That(result.Select(t => t.Size), Is.EqualTo(expectedOrder));
         }
 

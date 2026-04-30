@@ -137,6 +137,13 @@ namespace KanbanTests.Unit.Factories
         }
 
         [Test]
+        public void CreateListFoundTaskWithHateoas_throws_ArgumentNullException_when_task_is_null()
+        {
+            Assert.That(() => _factory.CreateListFoundTasksWithHateoas(null, _urlMock.Object, "http"),
+                Throws.ArgumentNullException);
+        }
+
+        [Test]
         public void CreatePagedResult_WithHateoasLinksFor_throws_on_null_inputs()
         {
             Assert.That(() => _factory.CreatePagedResult_WithHateoasLinksFor(null!, null, 0, 10, null, _urlMock.Object, "http"),

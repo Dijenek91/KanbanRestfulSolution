@@ -49,6 +49,20 @@ namespace KanbanTests.Unit.Controllers
             Assert.That(routeAttr.Template, Is.EqualTo("api/[controller]"));
         }
 
+        #region TaskServiceConstructorValidation
+
+        [Test]
+        public void Constructor_NullTaskService_ThrowsArgumentNullException()
+        {
+            Assert.Throws<ArgumentNullException>(() => new TasksController(null!, _taskResponseFactoryMock.Object));
+        }
+        public void Constructor_NullTaskFactory_ThrowsArgumentNullException()
+        {
+            Assert.Throws<ArgumentNullException>(() => new TasksController(_taskServiceMock.Object, null!));
+        }
+
+        #endregion
+
         #region GetAll
 
         [Test]

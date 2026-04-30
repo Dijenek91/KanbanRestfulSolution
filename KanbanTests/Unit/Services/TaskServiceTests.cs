@@ -31,6 +31,32 @@ namespace KanbanTests.Unit.Services
             _taskService = new TaskServiceHost(_unitOfWorkMock.Object, _repoMock.Object, _notifierMock.Object, _mapperMock.Object);
         }
 
+        #region Constructor validation
+        [Test]
+        public void TaskService_Constructor_UnitOfWorkNullParameter_ThrowsArgumentNullException()
+        {         
+            Assert.Throws<ArgumentNullException>(() => new TaskServiceHost(null, _repoMock.Object, _notifierMock.Object, _mapperMock.Object));
+        }
+
+        [Test]
+        public void TaskService_Constructor_RepoNullParameter_ThrowsArgumentNullException()
+        {
+            Assert.Throws<ArgumentNullException>(() => new TaskServiceHost(_unitOfWorkMock.Object, null, _notifierMock.Object, _mapperMock.Object));
+        }
+
+        [Test]
+        public void TaskService_Constructor_MapperNullParameter_ThrowsArgumentNullException()
+        {
+            Assert.Throws<ArgumentNullException>(() => new TaskServiceHost(_unitOfWorkMock.Object, _repoMock.Object, _notifierMock.Object, null));
+        }
+
+        [Test]
+        public void TaskService_Constructor_NotifierParameter_ThrowsArgumentNullException()
+        {
+            Assert.Throws<ArgumentNullException>(() => new TaskServiceHost(_unitOfWorkMock.Object, _repoMock.Object, null, _mapperMock.Object));
+        }
+        #endregion
+
         #region GetPaginatedTasksAsync
         [Test]
         public void GetPaginatedTasks_GetAll_NoPagination()
@@ -1042,6 +1068,35 @@ namespace KanbanTests.Unit.Services
             // act + assert
             Assert.Throws<ArgumentException>(() =>
                 _taskService.PartialUpdateTaskAsync(inputId, updateTask, CancellationToken.None).GetAwaiter().GetResult());
+
+            // assert
+            _repoMock.Verify(r => r.FindAsync(It.IsAny<int>(), It.IsAny<CancellationToken>()), Times.Never);
+            _repoMock.Verify(r => r.Update(It.IsAny<KanbanTask>()), Times.Never);
+            _unitOfWorkMock.Verify(u => u.SaveAsync(It.IsAny<CancellationToken>()), Times.Never);
+            _notifierMock.Verify(n => n.TaskCreated(It.IsAny<KanbanTask>(), It.IsAny<CancellationToken>()), Times.Never);
+        }
+
+        
+        [Test]
+        public void PartialUpdateTask_TaskRequestIsNull_ArgumentException()
+        {
+            // arrange
+            int inputId = 0;
+            var updateTask = new PartialUpdateKanbanTaskRequest { Name = "partial update Task" };
+            var mapped = new KanbanTask { Id = 1, Name = updateTask.Name };
+
+            _mapperMock.Setup(m => m.Map<KanbanTask>(It.IsAny<PartialUpdateKanbanTaskRequest>()))
+               .Returns(mapped);
+
+            _unitOfWorkMock.Setup(u => u.SaveAsync(It.IsAny<CancellationToken>()))
+                .Returns(Task.CompletedTask);
+
+            _notifierMock.Setup(n => n.TaskUpdated(It.IsAny<KanbanTask>(), It.IsAny<CancellationToken>()))
+                .Returns(Task.CompletedTask);
+
+            // act + assert
+            Assert.Throws<ArgumentException>(() =>
+                _taskService.PartialUpdateTaskAsync(inputId, null, CancellationToken.None).GetAwaiter().GetResult());
 
             // assert
             _repoMock.Verify(r => r.FindAsync(It.IsAny<int>(), It.IsAny<CancellationToken>()), Times.Never);

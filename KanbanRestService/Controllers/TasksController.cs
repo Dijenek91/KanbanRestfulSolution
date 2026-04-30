@@ -19,6 +19,10 @@ namespace KanbanRestService.Controllers
 
         public TasksController(ITaskService taskService, ITaskDTOFactory taskDTOFactory)
         {
+            if(taskService==null)
+                throw new ArgumentNullException(nameof(taskService), "[TasksController] Task service cannot be null.");
+            if(taskDTOFactory == null)
+                throw new ArgumentNullException(nameof(taskDTOFactory), "[TasksController] Task DTO factory cannot be null.");
             _taskService = taskService;
             _responseDtoFactory = taskDTOFactory;
         }

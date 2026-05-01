@@ -375,6 +375,7 @@ namespace KanbanTests.Unit.Services
             Assert.That(result.Select(t => t.Status), Is.EqualTo(expectedStatusOrder));
         }
 
+        [Test]
         public void GetPaginatedTasks_SortBySizeAscNameAsc_NoPagination()
         {
             //arrange
@@ -399,12 +400,13 @@ namespace KanbanTests.Unit.Services
 
             //assert
             var expectedSizeOrder = new List<int> { 1, 2, 2, 3 };
-            var expectedNameOrder = new List<string> { "Task 1", "Task 2", "Task 3", "Task 4" };
+            var expectedNameOrder = new List<string> { "Task 1", "Task 2", "Task 4", "Task 3" };
 
             Assert.That(result.Select(t => t.Size), Is.EqualTo(expectedSizeOrder));
             Assert.That(result.Select(t => t.Name), Is.EqualTo(expectedNameOrder));
         }
 
+        [Test]
         public void GetPaginatedTasks_SortBySizeAscNameDesc_NoPagination()
         {
             //arrange
@@ -429,12 +431,13 @@ namespace KanbanTests.Unit.Services
 
             //assert
             var expectedSizeOrder = new List<int> { 1, 2, 2, 3 };
-            var expectedNameOrder = new List<string> { "Task 4", "Task 3", "Task 2", "Task 1" };
+            var expectedNameOrder = new List<string> { "Task 1", "Task 4", "Task 2", "Task 3" };
 
             Assert.That(result.Select(t => t.Size), Is.EqualTo(expectedSizeOrder));
             Assert.That(result.Select(t => t.Name), Is.EqualTo(expectedNameOrder));
         }
 
+        [Test]
         public void GetPaginatedTasks_SortBySizeAscPriorityAsc_NoPagination()
         {
             //arrange
@@ -459,12 +462,13 @@ namespace KanbanTests.Unit.Services
 
             //assert
             var expectedSizeOrder = new List<int> { 1, 2, 2, 3 };
-            var priorityNameOrder = new List<PriorityEnum> { PriorityEnum.Low, PriorityEnum.Medium, PriorityEnum.Medium, PriorityEnum.High };
+            var priorityNameOrder = new List<PriorityEnum> { PriorityEnum.Medium, PriorityEnum.Medium, PriorityEnum.High, PriorityEnum.Low };
 
             Assert.That(result.Select(t => t.Size), Is.EqualTo(expectedSizeOrder));
-            Assert.That(result.Select(t => t.Name), Is.EqualTo(priorityNameOrder));
+            Assert.That(result.Select(t => t.PriorityEnum), Is.EqualTo(priorityNameOrder));
         }
-
+        
+        [Test]
         public void GetPaginatedTasks_SortBySizeAscPriorityDesc_NoPagination()
         {
             //arrange
@@ -489,10 +493,10 @@ namespace KanbanTests.Unit.Services
 
             //assert
             var expectedSizeOrder = new List<int> { 1, 2, 2, 3 };
-            var priorityNameOrder = new List<PriorityEnum> { PriorityEnum.High, PriorityEnum.Medium, PriorityEnum.Medium, PriorityEnum.Low };
+            var priorityNameOrder = new List<PriorityEnum> { PriorityEnum.Medium, PriorityEnum.High, PriorityEnum.Medium, PriorityEnum.Low };
 
             Assert.That(result.Select(t => t.Size), Is.EqualTo(expectedSizeOrder));
-            Assert.That(result.Select(t => t.Name), Is.EqualTo(priorityNameOrder));
+            Assert.That(result.Select(t => t.PriorityEnum), Is.EqualTo(priorityNameOrder));
         }
 
         [Test]

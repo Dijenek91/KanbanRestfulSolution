@@ -14,22 +14,22 @@ ARG BUILD_CONFIGURATION=Release
 WORKDIR /src
 # Copying the solution and project files first to leverage Docker cache for restoring nuget packages
 # Since the dockerfile is in KanbanRestService folder, this method needs to be used in solution root (not project root): docker build -f KanbanRestService/Dockerfile -t kanbanrestservice:dev . 
-COPY ["KanbanRestService.slnx", "./"]
+#COPY ["KanbanRestService.slnx", "./"]
 COPY ["KanbanRestService/KanbanRestService.csproj", "KanbanRestService/"]
 COPY ["KanbanInfrastructure/KanbanInfrastructure.csproj", "KanbanInfrastructure/"]
 COPY ["KanbanModel/KanbanModel.csproj", "KanbanModel/"]
 COPY ["MigrationPostgresSql/MigrationPostgresSql.csproj", "MigrationPostgresSql/"]
 COPY ["MigrationSqlServer/MigrationSqlServer.csproj", "MigrationSqlServer/"]
 
-RUN dotnet restore "KanbanRestService.slnx" #runs download of nuget packages (dependencies) for all projects in solution
+RUN dotnet restore "KanbanRestService/KanbanRestService.csproj" #runs download of nuget packages (dependencies) for all projects in the solution, but using the service project as entry point for restore to leverage caching of nuget packages in case of changes in other projects
 COPY . .
 WORKDIR "/src/."
-RUN dotnet build "./KanbanRestService.slnx" -c $BUILD_CONFIGURATION -o /app/build
+RUN dotnet build "KanbanRestService/KanbanRestService.csproj" -c $BUILD_CONFIGURATION -o /app/build
 
 # This stage is used to publish the service project to be copied to the final stage
 FROM build AS publish
 ARG BUILD_CONFIGURATION=Release
-RUN dotnet publish "./KanbanRestService.slnx" -c $BUILD_CONFIGURATION -o /app/publish /p:UseAppHost=false
+RUN dotnet publish "KanbanRestService/KanbanRestService.csproj" -c $BUILD_CONFIGURATION -o /app/publish /p:UseAppHost=false
 
 # This stage is used in production or when running from VS in regular mode (Default when not using the Debug configuration)
 FROM base AS final

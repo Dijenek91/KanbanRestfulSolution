@@ -110,5 +110,5 @@ jobs:
 
     - name: Build and push
       run: |
-        docker build -t dijenek91/kanban-api:${{ github.sha }} ./KanbanRestService
+        docker build -t dijenek91/kanban-api:${{ github.sha }} -f KanbanRestService/Dockerfile .
         docker push dijenek91/kanban-api:${{ github.sha }}

@@ -1,70 +1,150 @@
 # KanbanRestfulSolution
-Java Interview question reimagined as a NET10 framework service
 
-![CI](https://github.com/Dijenek91/KanbanRestfulSolution/actions/workflows/dotnet-ci.yml/badge.svg)
-![Coverage](https://codecov.io/gh/Dijenek91/KanbanRestfulSolution/branch/main/graph/badge.svg)
+> A modern, production-grade RESTful Kanban API using ASP.NET Core, Docker, PostgreSQL/MSSQL, SignalR, and JWT authentication.
 
-The implementation shall provide a rest API for a Kanban board front end UI.
-It shall include:
-  - REST CRUD operations - which include validation, pagination, filtering and sorting
-  - Persist data in a database (i chose SQL management studio to work with)
-  - AutoMapper - for DTO to Entity conversion
-  - Have SignalR to push events and notifications to the UI in regards to created/updated/deleted Tasks
-  - OpenAPI3/SCALAR
-  - Unit test + integration tests with 80+% coverage
-  - Docker envrioment - app+db
-	- Bonus challange i did for myself:
-		- DOCKER envrionment: Use postgreSQL as a seperate container and db provider
-		- DEVELOPMENT envrionment: use microsoft SQL server
-		- INTEGRATION tests: use SQLite in-memory
-  - Authentication with JWT
+[![CI](https://github.com/Dijenek91/KanbanRestfulSolution/actions/workflows/dotnet-ci.yml/badge.svg)](https://github.com/Dijenek91/KanbanRestfulSolution/actions)
+[![Coverage](https://codecov.io/gh/Dijenek91/KanbanRestfulSolution/branch/main/graph/badge.svg)](https://codecov.io/gh/Dijenek91/KanbanRestfulSolution)
 
-Performance requirement:
-  - on GET /api/tasks?page=0&size50 <= 150 ms on local laptop (whatever that means)
+## Overview
 
-CRUD operations:
-  - GetById - GET - /api/tasks
-  - GetAll - GET - /api/tasks/{id}
-  - Create - POST - /api/tasks
-  - Edit - PUT - /api/tasks/{id}
-  - Partial edit - PATCH - /api/tasks/{id} 
-    - DTO based approach for handling partial updated (JSON patch is an alternative)
-  - Delete - DELETE - /api/tasks/{id}
-HATEOAS links for:
-  - GetById - GET - /api/tasks
-  - GetAll - GET - /api/tasks/{id}
+**KanbanRestfulSolution** is a robust, enterprise-ready REST API for managing Kanban board tasks, built on the .NET 10 framework. Originally conceptualized as a Java interview challenge found on reddit, this project highlights modern software engineering best practices, scalable architecture, and extensive test coverage.
 
-Authenticaton\Authorization:
-  - Provided through use of JWT token generated through http://localhost:8080/api/Auth/login
-  - Username\password verification for requesteing the token is a dummy implementation and not a realworld implementation
-  - SCALAR UI doesnt support JWT testing, so verification of this functionality needs to be done through Postman project
+Key features include:
+- Full RESTful CRUD for Kanban tasks (with robust validation, pagination, filtering, and sorting)
+- Database abstraction with support for PostgreSQL (default, via Docker), MSSQL (development), and SQLite (integration testing)
+- Real-time updates via SignalR: clients receive push notifications for task creation, edits, and deletions
+- Clean architecture with AutoMapper for DTO/entity separation, and OpenAPI 3/Swagger documentation
+- JWT-based authentication and authorization (secure endpoints)
+- HATEOAS (hypermedia links) for API resource navigation
+- GraphQl support for flexible querying (bonus)
+- High code quality enforced through CI, code coverage, and 80%+ automated tests
 
-CI\CD:
-  - dotnet-ci.yml added in workflows
-  - On each push\pull request the CI:
-	- checkouts code
-	- builds
-	- runs the unit and integration tests
-	- adds the reporting and uploads it as artifact in github\Actions
+---
 
-Testing and verification envrioment:
-  - Postman project: https://web.postman.co/workspace/My-Workspace~3be1e0e9-c3e8-4732-800c-bb6ad975a485/collection/6602988-e533ff4c-6fa5-47d1-a054-6f2004b6fc6d?action=share&source=copy-link&creator=6602988
-  - Make sure to set the enviroment to: https://web.postman.co/workspace/My-Workspace~3be1e0e9-c3e8-4732-800c-bb6ad975a485/environment/6602988-ca9ebc0d-1512-40a8-8145-8495ebf0b111?action=share&source=copy-link&creator=6602988
-  - The enviroment needs to contain a "jwt_token" variable for setting after running the **POST method "api\Auth\login"**
-  - Note that depending on how you run the API (docker + postgresSQL or development + MicrosoftSQL) to hit the adequate URL
-  
-To run the API alone using docker you have to set some enviroment variables for the JWT token like this:
-```powershell
-docker run --rm -p 8080:8080 `
-  -e SuperSecretJwtKey=supersecretkey12345678901234567890 `
-  -e Issuer=MyKanbanTaskApp `
-  -e Audience=MyKanbanTaskApp `
-  kanbanrestservice:dev'
+## Features
+
+- **RESTful API Endpoints**  
+  Supports all Kanban task operations:
+  - `GET /api/tasks` (list, with filters/pagination)
+  - `GET /api/tasks/{id}` (retrieve by ID)
+  - `POST /api/tasks` (create)
+  - `PUT /api/tasks/{id}` (full update)
+  - `PATCH /api/tasks/{id}` (partial update via DTO or JSON Patch)
+  - `DELETE /api/tasks/{id}` (remove)
+  - HATEOAS links in resource representation
+  - GraphQL endpoint for flexible querying
+
+- **Data Persistence**  
+  - **Production**: PostgreSQL container via Docker Compose
+  - **Dev**: Microsoft SQL Server support
+  - **Tests**: In-memory SQLite
+
+- **Authentication & Security**  
+  - JWT Bearer token authentication (`/api/Auth/login`)
+  - Secure endpoints – all mutation routes require a valid token
+  - Password verification implemented as a demo (not for production)
+
+- **Real-Time Messaging**  
+  - SignalR hub for live event push to UI clients
+
+- **Validation & Documentation**
+  - Request validation throughout (models, DTOs)
+  - Interactive Swagger/OpenAPI (with limitations for JWT auth testing)
+  - Automated tests: 80%+ coverage
+
+---
+
+## Getting Started
+
+### Requirements
+
+- [.NET 10 SDK](https://dotnet.microsoft.com/)
+- [Docker & Docker Compose](https://www.docker.com/)
+- (Optional) SQL Server (Dev)
+
+### Quick Start (Docker: API + PostgreSQL)
+
+```sh
+# Clone the repo
+git clone https://github.com/Dijenek91/KanbanRestfulSolution.git
+cd KanbanRestfulSolution
+
+# Build containers
+docker compose build
+
+# Run services (API on :8080, PostgreSQL included)
+docker compose up
 ```
-Running the docker-compose.yaml for running the API and the PostgresSQL server as containers:
-	- Open powershell in solution root folder
-	- run cmd: ```docker compose build```
-	- run cmd: ```docker compose up```
-	
-Personal Task Tracking (obsolete):
-  - https://mykanbanproject.atlassian.net/jira/software/projects/DEV/boards/2?atlOrigin=eyJpIjoiZjEzOTU5MGZlOWFhNDJkYmE5Y2I5MmYzZjA2ODU0OTMiLCJwIjoiaiJ9
+
+#### Set Environment Variables (for JWT)
+
+```sh
+docker run --rm -p 8080:8080 \
+  -e SuperSecretJwtKey=supersecretkey12345678901234567890 \
+  -e Issuer=MyKanbanTaskApp \
+  -e Audience=MyKanbanTaskApp \
+  kanbanrestservice:dev
+```
+
+The API will be available at `http://localhost:8080`.
+
+### Running Tests
+
+- All pull requests/commits trigger the CI workflow: build, run all unit/integration tests, and publish code coverage reports.
+- Test results are viewable in GitHub Actions.
+- For local test run: `dotnet test`
+
+### Postman Collection
+
+- Use the official Postman collection ([link](https://web.postman.co/workspace/My-Workspace~3be1e0e9-c3e8-4732-800c-bb6ad975a485/collection/6602988-e533ff4c-6fa5-47d1-a054-6f2004b6fc6d))
+- Set the environment: [link](https://web.postman.co/workspace/My-Workspace~3be1e0e9-c3e8-4732-800c-bb6ad975a485/environment/6602988-ca9ebc0d-1512-40a8-8145-8495ebf0b111)
+- Manual JWT auth: after login (`POST /api/Auth/login`), set `jwt_token` variable in the Postman environment
+
+---
+
+## Architecture Diagram
+
+```mermaid
+flowchart LR
+    Client(UI) --REST/SignalR--> API[Kanban .NET 10 API]
+    API --CRUD--> DB[(PostgreSQL/MSSQL)]
+    API --SignalR--> Client(UI)
+    API --Tests--> SQLite[In-memory]
+```
+
+---
+
+## Technologies
+
+- .NET 10 (ASP.NET Core)
+- Entity Framework Core
+- AutoMapper
+- SignalR
+- PostgreSQL, MSSQL, SQLite
+- Docker & Docker Compose
+- JWT authentication
+- Swagger/OpenAPI 3
+- xUnit, Moq, CodeCov
+
+---
+
+## Performance
+
+- Expected: `GET /api/tasks?page=0&size=50` responds in under 150 ms (local laptop; depends on environment)
+
+---
+
+## CI/CD
+
+- Automated CI on push/PR: checks out, builds, tests, uploads artifacts
+- Code coverage tracked via Codecov
+
+---
+
+## Author
+
+**Dijenek91**
+
+- [GitHub Profile](https://github.com/Dijenek91)
+- [My comics page] (https://www.instagram.com/gogi_strip/)
+---

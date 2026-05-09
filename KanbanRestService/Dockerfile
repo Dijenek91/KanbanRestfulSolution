@@ -12,9 +12,8 @@ EXPOSE 8081
 FROM mcr.microsoft.com/dotnet/sdk:10.0 AS build
 ARG BUILD_CONFIGURATION=Release
 WORKDIR /src
-# Copying the solution and project files first to leverage Docker cache for restoring nuget packages
+# Copying the project files first to leverage Docker cache for restoring nuget packages
 # Since the dockerfile is in KanbanRestService folder, this method needs to be used in solution root (not project root): docker build -f KanbanRestService/Dockerfile -t kanbanrestservice:dev . 
-#COPY ["KanbanRestService.slnx", "./"]
 COPY ["KanbanRestService/KanbanRestService.csproj", "KanbanRestService/"]
 COPY ["KanbanInfrastructure/KanbanInfrastructure.csproj", "KanbanInfrastructure/"]
 COPY ["KanbanModel/KanbanModel.csproj", "KanbanModel/"]

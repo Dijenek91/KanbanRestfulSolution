@@ -14,6 +14,7 @@ using System.Text;
 namespace KanbanTests.Unit.Helpers
 {
     [TestFixture]
+    [Category("Unit")]
     internal class JWTKeyProviderTests
     {
 

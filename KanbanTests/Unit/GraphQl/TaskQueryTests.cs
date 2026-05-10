@@ -7,6 +7,7 @@ using NUnit.Framework;
 namespace KanbanTests.Unit.GraphQl
 {
     [TestFixture]
+    [Category("Unit")]
     internal class TaskQueryTests
     {
         private static KanbanAppDbContext CreateInMemoryContext(string dbName, IEnumerable<KanbanTask>? seed = null)

@@ -9,6 +9,7 @@ using NUnit.Framework;
 namespace KanbanTests.Unit.Mappers
 {
     [TestFixture]
+    [Category("Unit")]
     internal class TaskProfilesTests
     {
         private IMapper _mapper = null!;

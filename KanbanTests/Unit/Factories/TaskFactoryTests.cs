@@ -10,6 +10,7 @@ using NUnit.Framework;
 namespace KanbanTests.Unit.Factories
 {
     [TestFixture]
+    [Category("Unit")]
     internal class TaskFactoryTests
     {
         private IMapper _mapper = null!;

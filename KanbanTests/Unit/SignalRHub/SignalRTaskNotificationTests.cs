@@ -7,6 +7,7 @@ using NUnit.Framework;
 namespace KanbanTests.Unit.SignalRHub
 {
     [TestFixture]
+    [Category("Unit")]
     internal class SignalRTaskNotificationTests
     {
         private Mock<IHubContext<TasksHub>> _hubContextMock = null!;

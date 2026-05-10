@@ -11,6 +11,7 @@ using System.Security.Claims;
 namespace KanbanIntegrationTests
 {
     [TestFixture]
+    [Category("Integration")]
     internal class AuthControllerIntegrationTests
     {
         private WebAppFactoryCustom _factory = null!;

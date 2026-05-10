@@ -10,6 +10,7 @@ using System.Text.Json;
 namespace KanbanTests.Unit.Middlware
 {
     [TestFixture]
+    [Category("Unit")]
     internal class GlobalExceptionMiddlewareTests
     {
         private static HttpContext CreateContext()

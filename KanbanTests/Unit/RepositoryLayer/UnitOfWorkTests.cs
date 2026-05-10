@@ -11,6 +11,7 @@ using System.Text;
 namespace KanbanTests.Unit.RepositoryLayer
 {
     [TestFixture]
+    [Category("Unit")]
     internal class UnitOfWorkTests
     {
         private static KanbanAppDbContext CreateInMemoryContext(string dbName, IEnumerable<KanbanTask>? seed = null)

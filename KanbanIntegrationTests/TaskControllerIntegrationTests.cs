@@ -13,6 +13,7 @@ using System.Net.Http.Json;
 namespace KanbanIntegrationTests
 {
     [TestFixture]
+    [Category("Integration")]
     internal class TaskControllerIntegrationTests
     {
         private WebAppFactoryCustom _factory = null!;

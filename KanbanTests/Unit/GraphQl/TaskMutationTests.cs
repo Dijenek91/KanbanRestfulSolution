@@ -8,6 +8,7 @@ using NUnit.Framework;
 namespace KanbanTests.Unit.GraphQl
 {
     [TestFixture]
+    [Category("Unit")]
     internal class TaskMutationTests
     {
         private Mock<ITaskService> _svcMock = null!;

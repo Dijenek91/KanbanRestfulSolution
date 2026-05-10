@@ -12,6 +12,7 @@ using NUnit.Framework;
 namespace KanbanTests.Unit.Controllers
 {
     [TestFixture]
+    [Category("Unit")]
     internal class TaskControllerTests
     {
         private Mock<ITaskService> _taskServiceMock;

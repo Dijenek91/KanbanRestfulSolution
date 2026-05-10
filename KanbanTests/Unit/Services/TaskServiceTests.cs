@@ -12,6 +12,7 @@ using NUnit.Framework;
 namespace KanbanTests.Unit.Services
 {
     [TestFixture]
+    [Category("Unit")]
     internal class TaskServiceTests
     {
         private ITaskService _taskService;

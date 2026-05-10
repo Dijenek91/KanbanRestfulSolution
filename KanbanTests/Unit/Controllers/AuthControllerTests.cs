@@ -13,6 +13,7 @@ using System.Text;
 namespace KanbanTests.Unit.Controllers
 {
     [TestFixture]
+    [Category("Unit")]
     internal class AuthControllerTests
     {
         private const string ValidUsername = "admin";

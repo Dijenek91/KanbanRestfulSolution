@@ -51,16 +51,17 @@ namespace KanbanRestService.Controllers
         {
             var secretKey = JwtKeyProvider.GetKey(_config, _environment);
             Console.WriteLine($"auth controller USED JWT key (Auth): {secretKey}");
+            
             var issuer = _config["Issuer"];
             var audience = _config["Audience"];
-
+            
             Console.WriteLine($"ISSUER: '{issuer}'");
             Console.WriteLine($"AUDIENCE: '{audience}'");
 
-            var keyBytes = Encoding.UTF8.GetBytes(secretKey);
-            
-            var signingCredentials = new SigningCredentials(new SymmetricSecurityKey(keyBytes), SecurityAlgorithms.HmacSha256Signature);
             var subject = new ClaimsIdentity(new[] { new Claim(ClaimTypes.Name, username), new Claim(ClaimTypes.Role, "Admin") });
+            var keyBytes = Encoding.UTF8.GetBytes(secretKey);
+
+            var signingCredentials = new SigningCredentials(new SymmetricSecurityKey(keyBytes), SecurityAlgorithms.HmacSha256Signature);
 
             return new SecurityTokenDescriptor
             {

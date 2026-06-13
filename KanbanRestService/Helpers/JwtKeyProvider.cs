@@ -1,6 +1,4 @@
-﻿using Microsoft.EntityFrameworkCore.Metadata.Internal;
-
-namespace KanbanRestService.Helpers
+﻿namespace KanbanRestService.Helpers
 {
     public static class JwtKeyProvider
     {
